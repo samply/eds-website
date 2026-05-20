@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'wouter';
-import { Info, Calculator, ExternalLink } from 'lucide-react';
+import { Calculator, ExternalLink } from 'lucide-react';
 import { DEFAULT_FORM_VALUES } from '../types';
 import type { FormValues, ResultData } from '../types';
 import { calculateResult } from '../utils/scoring';
@@ -43,7 +43,6 @@ export default function ScorePage() {
         <div className="mb-[18px]">
           <label className="flex items-center gap-1.5 text-[13px] font-semibold text-text-primary mb-1.5">
             Tryptase (µg/L)
-            <span title="Serum tryptase level — higher values are associated with clonal eosinophilia"><Info size={15} className="text-text-muted cursor-help" /></span>
           </label>
           <div className="flex items-center border border-border rounded-lg bg-white overflow-hidden focus-within:border-blue transition-[border-color] duration-150">
             <input
@@ -63,7 +62,6 @@ export default function ScorePage() {
         <div className="mb-[18px]">
           <label className="flex items-center gap-1.5 text-[13px] font-semibold text-text-primary mb-1.5">
             Immunoglobulin E (kU/L)
-            <span title="Serum IgE level — lower values are associated with clonal eosinophilia"><Info size={15} className="text-text-muted cursor-help" /></span>
           </label>
           <div className="flex items-center border border-border rounded-lg bg-white overflow-hidden focus-within:border-blue transition-[border-color] duration-150">
             <input
@@ -83,7 +81,6 @@ export default function ScorePage() {
         <div className="mb-[18px]">
           <label className="flex items-center gap-1.5 text-[13px] font-semibold text-text-primary mb-1.5">
             Lactate dehydrogenase (U/L)
-            <span title="Serum LDH level"><Info size={15} className="text-text-muted cursor-help" /></span>
           </label>
           <div className="flex items-center border border-border rounded-lg bg-white overflow-hidden focus-within:border-blue transition-[border-color] duration-150">
             <input
@@ -103,7 +100,6 @@ export default function ScorePage() {
         <div className="mb-[18px]">
           <label className="flex items-center gap-1.5 text-[13px] font-semibold text-text-primary mb-1.5">
             Vitamin B12 (pmol/L)
-            <span title="Serum vitamin B12 level — higher values are associated with clonal eosinophilia"><Info size={15} className="text-text-muted cursor-help" /></span>
           </label>
           <div className="flex items-center border border-border rounded-lg bg-white overflow-hidden focus-within:border-blue transition-[border-color] duration-150">
             <input
@@ -123,7 +119,16 @@ export default function ScorePage() {
         <div className="mb-[18px]">
           <label className="flex items-center gap-1.5 text-[13px] font-semibold text-text-primary mb-1.5">
             Number of involved organs
-            <span title="Number of organ systems affected by eosinophilia"><Info size={15} className="text-text-muted cursor-help" /></span>
+            <span className="relative inline-flex cursor-help group">
+              <svg size={15} width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8a9ab8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 16v-4" />
+                <path d="M12 8h.01" />
+              </svg>
+              <span className="invisible opacity-0 group-hover:visible group-hover:opacity-100 absolute bottom-[calc(100%+6px)] left-1/2 -translate-x-1/2 bg-navy text-white text-[11px] font-medium px-2 py-1 rounded whitespace-nowrap transition-opacity duration-150 pointer-events-none z-100 after:content-[''] after:absolute after:top-full after:left-1/2 after:-translate-x-1/2 after:border-5 after:border-transparent after:border-t-navy">
+                placeholder – explanation of this variable to be added
+              </span>
+            </span>
           </label>
           <div className="relative">
             <select
@@ -148,7 +153,6 @@ export default function ScorePage() {
         <div className="mb-[18px]">
           <label className="flex items-center gap-1.5 text-[13px] font-semibold text-text-primary mb-1.5">
             Splenomegaly
-            <span title="Presence of splenomegaly on imaging"><Info size={15} className="text-text-muted cursor-help" /></span>
           </label>
           <div className="flex gap-2">
             <button
@@ -184,7 +188,6 @@ export default function ScorePage() {
               </span>
             </span>
             {' '}involvement or asthma
-            <span title="ENT (ear-nose-throat) involvement (sinusitis, polyps) and/or asthma"><Info size={15} className="text-text-muted cursor-help" /></span>
           </label>
           <div className="flex gap-2">
             <button

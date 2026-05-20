@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
-import { Info, ChevronDown, Dna, Heart, AirVent, ArrowRight, Flag, Lock } from 'lucide-react';
+import { ChevronDown, Dna, Heart, AirVent, ArrowRight, Flag, Lock } from 'lucide-react';
 
 /* ── Main WorkupPage ── */
 export default function WorkupPage() {
@@ -16,24 +16,15 @@ export default function WorkupPage() {
       </p>
 
       {/* Key diagnostic criteria */}
-      <div className="flex items-center gap-1.5 text-[13px] font-semibold text-text-primary mb-3.5">
-        Key diagnostic criteria (overview)
-        <Info size={14} className="text-text-muted" />
-      </div>
+      <h2 className="font-heading text-[17px] font-semibold text-navy mb-4">Key diagnostic criteria (overview)</h2>
       <CriteriaAccordion />
 
       {/* Genetic Workup */}
-      <div className="flex items-center gap-1.5 text-[13px] font-semibold text-text-primary mt-7 mb-3.5">
-        Genetic workup
-        <Info size={14} className="text-text-muted" />
-      </div>
+      <h2 className="font-heading text-[17px] font-semibold text-navy mt-7 mb-4">Genetic workup</h2>
       <GeneticWorkup />
 
       {/* Clinical Workup Tabs */}
-      <div className="flex items-center gap-1.5 text-[13px] font-semibold text-text-primary mt-7 mb-3.5">
-        Clinical workup
-        <Info size={14} className="text-text-muted" />
-      </div>
+      <h2 className="font-heading text-[17px] font-semibold text-navy mt-7 mb-4">Clinical workup</h2>
       <div className="flex gap-2.5 mb-6">
         <button
           onClick={() => setActiveTab('cardiac')}
