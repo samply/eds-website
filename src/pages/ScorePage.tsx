@@ -1,16 +1,19 @@
-import { useState } from 'react';
+import { useMemo } from 'react';
 import { Link } from 'wouter';
-import { Calculator, ExternalLink } from 'lucide-react';
+import { ExternalLink, RotateCcw } from 'lucide-react';
 import { DEFAULT_FORM_VALUES } from '../types';
-import type { FormValues, ResultData } from '../types';
+import type { FormValues } from '../types';
 import { calculateResult } from '../utils/scoring';
 import Gauge from '../components/Gauge';
 import ContributionCards from '../components/ContributionCards';
 
-export default function ScorePage() {
-  const [values, setValues] = useState<FormValues>(DEFAULT_FORM_VALUES);
-  const [result, setResult] = useState<ResultData | null>(null);
+interface ScorePageProps {
+  values: FormValues;
+  onValuesChange: React.Dispatch<React.SetStateAction<FormValues>>;
+}
 
+export default function ScorePage({ values, onValuesChange: setValues }: ScorePageProps) {
+  const handleReset = () => setValues(DEFAULT_FORM_VALUES);
   const handleTextChange = (field: keyof FormValues, value: string) => {
     setValues((prev) => ({ ...prev, [field]: value }));
   };
@@ -23,20 +26,32 @@ export default function ScorePage() {
     setValues((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleCalculate = () => {
-    const res = calculateResult(values);
-    if (!res) {
-      alert('Please fill in all fields before calculating the score.');
-      return;
-    }
-    setResult(res);
-  };
+  const result = useMemo(() => {
+    const canCompute =
+      values.tryptase !== '' &&
+      values.ige !== '' &&
+      values.ldh !== '' &&
+      values.b12 !== '' &&
+      values.organs !== '' &&
+      values.splen !== null &&
+      values.ent !== null;
+    return canCompute ? calculateResult(values) : null;
+  }, [values]);
 
   return (
     <div className="grid grid-cols-[340px_1fr] gap-7 items-start animate-fade-in">
       {/* Input Panel */}
       <div className="bg-white border border-border rounded-xl p-7 shadow-sm">
-        <div className="font-heading text-lg font-semibold text-navy mb-1.5">Input variables</div>
+        <div className="flex items-center justify-between mb-1.5">
+          <div className="font-heading text-lg font-semibold text-navy">Input variables</div>
+          <button
+            onClick={handleReset}
+            className="flex items-center gap-1 px-3 py-1.5 border border-border bg-white text-text-secondary text-xs font-medium cursor-pointer rounded-lg hover:border-blue hover:bg-blue-pale hover:text-blue transition-[border-color,background,color] duration-150"
+          >
+            <RotateCcw size={13} strokeWidth={2.2} />
+            Reset
+          </button>
+        </div>
         <div className="text-[13px] text-text-muted mb-6">Enter the patient's values.</div>
 
         {/* Tryptase */}
@@ -120,7 +135,7 @@ export default function ScorePage() {
           <label className="flex items-center gap-1.5 text-[13px] font-semibold text-text-primary mb-1.5">
             Number of involved organs
             <span className="relative inline-flex cursor-help group">
-              <svg size={15} width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8a9ab8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8a9ab8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
                 <circle cx="12" cy="12" r="10" />
                 <path d="M12 16v-4" />
                 <path d="M12 8h.01" />
@@ -212,15 +227,6 @@ export default function ScorePage() {
             </button>
           </div>
         </div>
-
-        <button
-          onClick={handleCalculate}
-          className="w-full py-3 bg-navy text-white border-none rounded-lg font-[DM_Sans,sans-serif] text-[15px] font-semibold cursor-pointer flex items-center justify-center gap-2 mt-2 hover:bg-navy-mid active:scale-[0.99] transition-[background,transform] duration-150 tracking-wide"
-        >
-          <Calculator size={16} strokeWidth={2.2} />
-          Calculate score
-        </button>
-
       </div>
 
       {/* Result Panel */}
@@ -236,7 +242,7 @@ export default function ScorePage() {
               <circle cx="12" cy="7.5" r="0.8" fill="currentColor" stroke="none" />
             </svg>
             <p className="text-sm max-w-[260px] leading-relaxed">
-              Enter the patient's values on the left and click <strong>Calculate score</strong> to see the result.
+              Specify all input variables on the left to display the EDS result.
             </p>
           </div>
         ) : (

@@ -1,11 +1,10 @@
-import { Info, RotateCcw } from 'lucide-react';
+import { Info } from 'lucide-react';
 
 interface HeaderProps {
   onAbout: () => void;
-  onReset: () => void;
 }
 
-export default function Header({ onAbout, onReset }: HeaderProps) {
+export default function Header({ onAbout }: HeaderProps) {
   return (
     <header className="bg-white border-b border-border px-8 h-[60px] flex items-center justify-between sticky top-0 z-100 shadow-sm">
       <div className="flex items-center gap-3">
@@ -30,13 +29,7 @@ export default function Header({ onAbout, onReset }: HeaderProps) {
           <Info size={15} />
           About
         </button>
-        <button
-          onClick={onReset}
-          className="flex items-center gap-1.5 px-4 py-1.5 border border-border bg-white text-text-primary text-sm font-medium cursor-pointer rounded-lg hover:border-blue hover:bg-blue-pale transition-[border-color,background] duration-150"
-        >
-          <RotateCcw size={14} strokeWidth={2.2} />
-          Reset all
-        </button>
+
       </div>
     </header>
   );

@@ -1,6 +1,8 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { Router, Switch, Route } from 'wouter';
 import { useHashLocation } from 'wouter/use-hash-location';
+import { DEFAULT_FORM_VALUES } from './types';
+import type { FormValues } from './types';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import Footer from './components/Footer';
@@ -12,23 +14,19 @@ import ContactPage from './pages/ContactPage';
 
 export default function App() {
   const [aboutOpen, setAboutOpen] = useState(false);
-  const [resetKey, setResetKey] = useState(0);
-
-  const handleForceReset = useCallback(() => {
-    setResetKey((k) => k + 1);
-  }, []);
+  const [scoreValues, setScoreValues] = useState<FormValues>(DEFAULT_FORM_VALUES);
 
   return (
     <Router hook={useHashLocation}>
       <div className="min-h-screen flex flex-col">
-        <Header onAbout={() => setAboutOpen(true)} onReset={handleForceReset} />
+        <Header onAbout={() => setAboutOpen(true)} />
 
         <div className="flex flex-1" style={{ minHeight: 'calc(100vh - 60px)' }}>
           <Sidebar />
           <main className="flex-1 px-10 py-9 max-w-[1100px]">
             <Switch>
               <Route path="/score">
-                <ScorePage key={resetKey} />
+                <ScorePage values={scoreValues} onValuesChange={setScoreValues} />
               </Route>
               <Route path="/methods">
                 <MethodsPage />
@@ -40,7 +38,7 @@ export default function App() {
                 <ContactPage />
               </Route>
               <Route path="/">
-                <ScorePage key={resetKey} />
+                <ScorePage values={scoreValues} onValuesChange={setScoreValues} />
               </Route>
             </Switch>
           </main>
