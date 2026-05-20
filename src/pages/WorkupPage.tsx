@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
-import { ChevronDown, Dna, Heart, AirVent, ArrowRight, Flag, Lock } from 'lucide-react';
+import { ChevronDown, Dna, Heart, AirVent, Lock } from 'lucide-react';
 
 /* ── Main WorkupPage ── */
 export default function WorkupPage() {
@@ -352,83 +352,72 @@ function CriteriaAccordion() {
 
 /* ── Genetic Workup ── */
 function GeneticWorkup() {
-  const [unlockedStep, setUnlockedStep] = useState(1);
+  const [openStep, setOpenStep] = useState<number | null>(null);
 
-  const unlock = (step: number) => {
-    setUnlockedStep(step);
-    setTimeout(() => {
-      document.getElementById(`gw-step-${step}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }, 50);
+  const toggleStep = (step: number) => {
+    setOpenStep((prev) => (prev === step ? null : step));
   };
 
   return (
     <div className="flex flex-col gap-0">
       {/* Step 1 */}
-      <FlowStep number={1} isActive={true} isLast={unlockedStep < 2}>
-        <FlowPanel
-          icon={<Dna size={18} />}
-          title="Initial genetic diagnostics"
-          subtitle="Standard cytogenetic and molecular screening"
-        >
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3 my-3.5">
-            <MethodCard title="Conventional cytogenetics (karyotype)" />
-            <MethodCard title="Fluorescence in situ hybridization (FISH)" />
-            <MethodCard title="Reverse transcriptase PCR (RT-PCR)" />
-          </div>
-          <button
-            onClick={() => unlock(2)}
-            className="inline-flex items-center gap-1.5 px-[18px] py-2 bg-navy text-white border-none rounded-lg font-[DM_Sans,sans-serif] text-[13px] font-semibold cursor-pointer mt-2 hover:bg-blue transition-colors duration-150"
-          >
-            Next <ArrowRight size={14} strokeWidth={2.5} />
-          </button>
-        </FlowPanel>
+      <FlowStep
+        number={1}
+        isOpen={openStep === 1}
+        onToggle={() => toggleStep(1)}
+        icon={<Dna size={18} />}
+        title="Initial genetic diagnostics"
+        subtitle="Standard cytogenetic and molecular screening"
+      >
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3 my-3.5">
+          <MethodCard title="Conventional cytogenetics (karyotype)" />
+          <MethodCard title="Fluorescence in situ hybridization (FISH)" />
+          <MethodCard title="Reverse transcriptase PCR (RT-PCR)" />
+        </div>
       </FlowStep>
 
       {/* Step 2 */}
-      <FlowStep number={2} isActive={unlockedStep >= 2} isLast={unlockedStep < 3}>
-        <FlowPanel
-          icon={
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M8 2 C8 7, 16 9, 16 12 C16 15, 8 17, 8 22" strokeLinecap="round" />
-              <path d="M16 2 C16 7, 8 9, 8 12 C8 15, 16 17, 16 22" strokeLinecap="round" />
-              <line x1="9.5" y1="9.5" x2="14.5" y2="9.5" strokeLinecap="round" />
-              <line x1="9.5" y1="14.5" x2="14.5" y2="14.5" strokeLinecap="round" />
-            </svg>
-          }
-          title="Next generation sequencing (NGS)"
-          subtitle="Targeted myeloid panel sequencing"
-        >
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3 my-3.5">
-            <MethodCard title="Myeloid gene panel (NGS)" />
-            <MethodCard title="Variant interpretation" />
-          </div>
-          <button
-            onClick={() => unlock(3)}
-            className="inline-flex items-center gap-1.5 px-[18px] py-2 bg-navy text-white border-none rounded-lg font-[DM_Sans,sans-serif] text-[13px] font-semibold cursor-pointer mt-2 hover:bg-blue transition-colors duration-150"
-          >
-            Next <ArrowRight size={14} strokeWidth={2.5} />
-          </button>
-        </FlowPanel>
+      <FlowStep
+        number={2}
+        isOpen={openStep === 2}
+        onToggle={() => toggleStep(2)}
+        icon={
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M8 2 C8 7, 16 9, 16 12 C16 15, 8 17, 8 22" strokeLinecap="round" />
+            <path d="M16 2 C16 7, 8 9, 8 12 C8 15, 16 17, 16 22" strokeLinecap="round" />
+            <line x1="9.5" y1="9.5" x2="14.5" y2="9.5" strokeLinecap="round" />
+            <line x1="9.5" y1="14.5" x2="14.5" y2="14.5" strokeLinecap="round" />
+          </svg>
+        }
+        title="Next generation sequencing (NGS)"
+        subtitle="Targeted myeloid panel sequencing"
+      >
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3 my-3.5">
+          <MethodCard title="Myeloid gene panel (NGS)" />
+          <MethodCard title="Variant interpretation" />
+        </div>
       </FlowStep>
 
       {/* Step 3 */}
-      <FlowStep number={3} isActive={unlockedStep >= 3} isLast={true} isFlag={true}>
-        <FlowPanel
-          icon={
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <ellipse cx="12" cy="5" rx="9" ry="3" />
-              <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
-              <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
-            </svg>
-          }
-          title="Advanced sequencing"
-          subtitle="Whole transcriptome and genome sequencing"
-        >
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3 my-3.5">
-            <MethodCard title="Whole transcriptome sequencing (WTS)" />
-            <MethodCard title="Whole genome sequencing (WGS)" />
-          </div>
-        </FlowPanel>
+      <FlowStep
+        number={3}
+        isOpen={openStep === 3}
+        onToggle={() => toggleStep(3)}
+        isLast={true}
+        icon={
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <ellipse cx="12" cy="5" rx="9" ry="3" />
+            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+          </svg>
+        }
+        title="Advanced sequencing"
+        subtitle="Whole transcriptome and genome sequencing"
+      >
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3 my-3.5">
+          <MethodCard title="Whole transcriptome sequencing (WTS)" />
+          <MethodCard title="Whole genome sequencing (WGS)" />
+        </div>
       </FlowStep>
     </div>
   );
@@ -436,67 +425,61 @@ function GeneticWorkup() {
 
 function FlowStep({
   number,
-  isActive,
+  isOpen,
+  onToggle,
   isLast,
-  isFlag,
-  children,
-}: {
-  number: number;
-  isActive: boolean;
-  isLast: boolean;
-  isFlag?: boolean;
-  children: React.ReactNode;
-}) {
-  if (!isActive) {
-    return (
-      <div className="flex gap-[18px] items-start" id={`gw-step-${number}`} style={{ display: 'none' }}>
-        {children}
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex gap-[18px] items-start" id={`gw-step-${number}`}>
-      <div className="flex flex-col items-center shrink-0 w-8">
-        {isFlag ? (
-          <div className="w-8 h-8 bg-white border-2 border-border rounded-full flex items-center justify-center text-text-muted">
-            <Flag size={14} />
-          </div>
-        ) : (
-          <div className="w-8 h-8 bg-blue text-white rounded-full flex items-center justify-center font-heading text-sm font-bold shrink-0 relative z-10">
-            {number}
-          </div>
-        )}
-        {!isLast && <div className="w-[2px] flex-1 min-h-[20px] bg-border my-1" />}
-      </div>
-      <div className="flex-1 mb-5">{children}</div>
-    </div>
-  );
-}
-
-function FlowPanel({
   icon,
   title,
   subtitle,
   children,
 }: {
+  number: number;
+  isOpen: boolean;
+  onToggle: () => void;
+  isLast?: boolean;
   icon: React.ReactNode;
   title: string;
   subtitle: string;
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-white border border-border rounded-xl p-5 shadow-sm">
-      <div className="flex items-center gap-3.5 mb-3.5">
-        <div className="w-9 h-9 bg-blue-pale rounded-lg flex items-center justify-center text-blue">
-          {icon}
+    <div className="flex gap-[18px] items-start" id={`gw-step-${number}`}>
+      <div className="flex flex-col items-center shrink-0 w-8 self-stretch relative">
+        <div className="w-8 h-8 bg-blue text-white rounded-full flex items-center justify-center font-heading text-sm font-bold shrink-0 relative z-10">
+          {number}
         </div>
-        <div>
-          <h3 className="font-heading text-[15px] font-semibold text-navy">{title}</h3>
-          <p className="text-[13px] text-text-muted mt-0.5">{subtitle}</p>
+        {!isLast && (
+          <div className="absolute top-10 bottom-2 left-1/2 -translate-x-1/2 w-[2px] bg-border" />
+        )}
+      </div>
+      <div className="flex-1 mb-5">
+        <div
+          className="bg-white border border-border rounded-xl shadow-sm cursor-pointer select-none overflow-hidden transition-[box-shadow,border-color] duration-150 hover:shadow-md hover:border-blue"
+        >
+          <div
+            onClick={onToggle}
+            className={`flex items-center gap-3.5 ${isOpen ? 'p-5' : 'p-3.5'}`}
+          >
+            <div className={`${isOpen ? 'w-9 h-9' : 'w-8 h-8'} bg-blue-pale rounded-lg flex items-center justify-center text-blue shrink-0`}>
+              {icon}
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className={`font-heading font-semibold text-navy ${isOpen ? 'text-[15px]' : 'text-sm'}`}>{title}</h3>
+              {isOpen && <p className="text-[13px] text-text-muted mt-0.5">{subtitle}</p>}
+            </div>
+            <ChevronDown
+              size={16}
+              strokeWidth={2.5}
+              className={`text-text-muted shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+            />
+          </div>
+          {isOpen && (
+            <div className="px-5 pb-5 animate-fade-in">
+              {children}
+            </div>
+          )}
         </div>
       </div>
-      {children}
     </div>
   );
 }
@@ -542,67 +525,61 @@ function CardiacWorkup() {
   return (
     <div className="flex flex-col gap-0">
       {/* Step 1: Input */}
-      <div className="flex gap-[18px] items-start">
-        <div className="flex flex-col items-center shrink-0 w-8">
-          <div className="w-8 h-8 bg-blue text-white rounded-full flex items-center justify-center font-heading text-sm font-bold shrink-0 relative z-10">1</div>
-          <div className="w-[2px] flex-1 min-h-[20px] bg-border my-1" />
-        </div>
-        <div className="flex-1 mb-5">
-          <div className="bg-white border border-border rounded-xl p-5 shadow-sm">
-            <div className="flex items-center gap-3.5 mb-3.5">
-              <div className="w-9 h-9 bg-blue-pale rounded-lg flex items-center justify-center text-blue">
-                <Heart size={18} />
-              </div>
-              <div>
-                <h3 className="font-heading text-[15px] font-semibold text-navy">Cardiac parameters</h3>
-                <p className="text-[13px] text-text-muted mt-0.5">Enter cardiac biomarkers and imaging findings.</p>
+      <div>
+        <div className="bg-white border border-border rounded-xl p-5 shadow-sm">
+          <div className="flex items-center gap-3.5 mb-3.5">
+            <div className="w-9 h-9 bg-blue-pale rounded-lg flex items-center justify-center text-blue">
+              <Heart size={18} />
+            </div>
+            <div>
+              <h3 className="font-heading text-[15px] font-semibold text-navy">Cardiac parameters</h3>
+              <p className="text-[13px] text-text-muted mt-0.5">Enter cardiac biomarkers and imaging findings.</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-3.5 items-end">
+            <div>
+              <label className="flex items-center gap-1.5 text-xs font-semibold text-text-primary mb-1.5">hs-Troponin I (µg/L)</label>
+              <div className="flex items-center border border-border rounded-lg overflow-hidden focus-within:border-blue transition-[border-color] duration-150">
+                <input
+                  type="number"
+                  value={trop}
+                  onChange={(e) => { setTrop(e.target.value); handleInput(); }}
+                  placeholder="e.g. 0.040"
+                  min="0"
+                  step="0.001"
+                  className="flex-1 px-3 py-2 border-none outline-none font-[DM_Sans,sans-serif] text-sm text-text-primary bg-transparent"
+                />
+                <div className="px-3 py-2 text-[13px] text-text-muted bg-bg border-l border-border whitespace-nowrap">µg/L</div>
               </div>
             </div>
-            <div className="grid grid-cols-3 gap-3.5 items-end">
-              <div>
-                <label className="flex items-center gap-1.5 text-xs font-semibold text-text-primary mb-1.5">hs-Troponin I (µg/L)</label>
-                <div className="flex items-center border border-border rounded-lg overflow-hidden focus-within:border-blue transition-[border-color] duration-150">
-                  <input
-                    type="number"
-                    value={trop}
-                    onChange={(e) => { setTrop(e.target.value); handleInput(); }}
-                    placeholder="e.g. 0.040"
-                    min="0"
-                    step="0.001"
-                    className="flex-1 px-3 py-2 border-none outline-none font-[DM_Sans,sans-serif] text-sm text-text-primary bg-transparent"
-                  />
-                  <div className="px-3 py-2 text-[13px] text-text-muted bg-bg border-l border-border whitespace-nowrap">µg/L</div>
-                </div>
+            <div>
+              <label className="flex items-center gap-1.5 text-xs font-semibold text-text-primary mb-1.5">NT-proBNP (ng/L)</label>
+              <div className="flex items-center border border-border rounded-lg overflow-hidden focus-within:border-blue transition-[border-color] duration-150">
+                <input
+                  type="number"
+                  value={bnp}
+                  onChange={(e) => { setBnp(e.target.value); handleInput(); }}
+                  placeholder="e.g. 120"
+                  min="0"
+                  step="1"
+                  className="flex-1 px-3 py-2 border-none outline-none font-[DM_Sans,sans-serif] text-sm text-text-primary bg-transparent"
+                />
+                <div className="px-3 py-2 text-[13px] text-text-muted bg-bg border-l border-border whitespace-nowrap">ng/L</div>
               </div>
-              <div>
-                <label className="flex items-center gap-1.5 text-xs font-semibold text-text-primary mb-1.5">NT-proBNP (ng/L)</label>
-                <div className="flex items-center border border-border rounded-lg overflow-hidden focus-within:border-blue transition-[border-color] duration-150">
-                  <input
-                    type="number"
-                    value={bnp}
-                    onChange={(e) => { setBnp(e.target.value); handleInput(); }}
-                    placeholder="e.g. 120"
-                    min="0"
-                    step="1"
-                    className="flex-1 px-3 py-2 border-none outline-none font-[DM_Sans,sans-serif] text-sm text-text-primary bg-transparent"
-                  />
-                  <div className="px-3 py-2 text-[13px] text-text-muted bg-bg border-l border-border whitespace-nowrap">ng/L</div>
-                </div>
-              </div>
-              <div>
-                <label className="flex items-center gap-1.5 text-xs font-semibold text-text-primary mb-1.5">LGE in MRI</label>
-                <div className="relative">
-                  <select
-                    value={lge}
-                    onChange={(e) => { setLge(e.target.value); if (!showResult) setShowResult(true); }}
-                    className="w-full px-3 py-2 pr-9 border border-border rounded-lg bg-white font-[DM_Sans,sans-serif] text-sm text-text-primary appearance-none cursor-pointer outline-none focus:border-blue transition-[border-color] duration-150"
-                  >
-                    <option value="">— Select —</option>
-                    <option value="yes">Positive</option>
-                    <option value="no">Negative / not done</option>
-                  </select>
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2 w-0 h-0 border-l-4 border-r-4 border-t-[5px] border-l-transparent border-r-transparent border-t-text-muted pointer-events-none" />
-                </div>
+            </div>
+            <div>
+              <label className="flex items-center gap-1.5 text-xs font-semibold text-text-primary mb-1.5">LGE in MRI</label>
+              <div className="relative">
+                <select
+                  value={lge}
+                  onChange={(e) => { setLge(e.target.value); if (!showResult) setShowResult(true); }}
+                  className="w-full px-3 py-2 pr-9 border border-border rounded-lg bg-white font-[DM_Sans,sans-serif] text-sm text-text-primary appearance-none cursor-pointer outline-none focus:border-blue transition-[border-color] duration-150"
+                >
+                  <option value="">— Select —</option>
+                  <option value="yes">Positive</option>
+                  <option value="no">Negative / not done</option>
+                </select>
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 w-0 h-0 border-l-4 border-r-4 border-t-[5px] border-l-transparent border-r-transparent border-t-text-muted pointer-events-none" />
               </div>
             </div>
           </div>
@@ -610,41 +587,34 @@ function CardiacWorkup() {
       </div>
 
       {/* Step 2: Result */}
-      <div className={`flex gap-[18px] items-start ${!canCompute ? 'opacity-40 pointer-events-none' : ''}`}>
-        <div className="flex flex-col items-center shrink-0 w-8">
-          <div className={`w-8 h-8 bg-white border-2 rounded-full flex items-center justify-center ${showResult && canCompute ? 'border-accent-green text-accent-green' : 'border-border text-text-muted'}`}>
-            <Flag size={14} />
-          </div>
-        </div>
-        <div className="flex-1 mb-5">
-          <div className="bg-white border border-border rounded-xl p-5 shadow-sm">
-            <div className="flex items-center gap-3.5 mb-3.5">
-              <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${showResult && canCompute ? 'bg-blue-pale text-blue' : 'bg-bg text-text-muted'}`}>
-                <Lock size={18} />
-              </div>
-              <div>
-                <h3 className="font-heading text-[15px] font-semibold text-navy">Cardiac risk assessment</h3>
-                <p className="text-[13px] text-text-muted mt-0.5">
-                  {showResult && canCompute ? 'Cardiac risk assessment complete.' : 'Complete the parameters to see the result.'}
-                </p>
-              </div>
+      <div className={`mt-5 ${!canCompute ? 'opacity-40 pointer-events-none' : ''}`}>
+        <div className="bg-white border border-border rounded-xl p-5 shadow-sm">
+          <div className="flex items-center gap-3.5 mb-3.5">
+            <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${showResult && canCompute ? 'bg-blue-pale text-blue' : 'bg-bg text-text-muted'}`}>
+              <Lock size={18} />
             </div>
-
-            {showResult && canCompute && (
-              <div>
-                <div className="inline-flex items-center gap-2 px-[18px] py-2.5 rounded-lg font-bold text-base mb-3.5 bg-bg text-navy border border-border">
-                  {riskLabel} (Score: {score})
-                </div>
-                <div className="text-[13px] text-text-secondary mb-3.5">
-                  <strong>Score components:</strong> {details.length ? details.join(' · ') : 'No points scored'} &nbsp;|&nbsp;{' '}
-                  <strong>Total: {score} point{score !== 1 ? 's' : ''}</strong>
-                </div>
-                <p className="mt-2.5 text-[11px] text-text-muted italic">
-                  ⚠ This cardiac risk score has not yet been formally validated and should be interpreted with caution. It is intended as a preliminary clinical support tool only.
-                </p>
-              </div>
-            )}
+            <div>
+              <h3 className="font-heading text-[15px] font-semibold text-navy">Cardiac risk assessment</h3>
+              <p className="text-[13px] text-text-muted mt-0.5">
+                {showResult && canCompute ? 'Cardiac risk assessment complete.' : 'Complete the parameters to see the result.'}
+              </p>
+            </div>
           </div>
+
+          {showResult && canCompute && (
+            <div>
+              <div className="inline-flex items-center gap-2 px-[18px] py-2.5 rounded-lg font-bold text-base mb-3.5 bg-bg text-navy border border-border">
+                {riskLabel} (Score: {score})
+              </div>
+              <div className="text-[13px] text-text-secondary mb-3.5">
+                <strong>Score components:</strong> {details.length ? details.join(' · ') : 'No points scored'} &nbsp;|&nbsp;{' '}
+                <strong>Total: {score} point{score !== 1 ? 's' : ''}</strong>
+              </div>
+              <p className="mt-2.5 text-[11px] text-text-muted italic">
+                ⚠ This cardiac risk score has not yet been formally validated and should be interpreted with caution. It is intended as a preliminary clinical support tool only.
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -655,44 +625,31 @@ function CardiacWorkup() {
 function PulmonaryWorkup() {
   return (
     <div className="flex flex-col gap-0">
-      <div className="flex gap-[18px] items-start">
-        <div className="flex flex-col items-center shrink-0 w-8">
-          <div className="w-8 h-8 bg-blue text-white rounded-full flex items-center justify-center font-heading text-sm font-bold shrink-0 relative z-10">1</div>
-          <div className="w-[2px] flex-1 min-h-[20px] bg-border my-1" />
-        </div>
-        <div className="flex-1 mb-5">
-          <div className="bg-white border border-border rounded-xl p-5 shadow-sm">
-            <div className="flex items-center gap-3.5 mb-3.5">
-              <div className="w-9 h-9 bg-blue-pale rounded-lg flex items-center justify-center text-blue">
-                <AirVent size={18} />
-              </div>
-              <div>
-                <h3 className="font-heading text-[15px] font-semibold text-navy">Pulmonary parameters</h3>
-                <p className="text-[13px] text-text-muted mt-0.5">This section is a placeholder and will be completed in a subsequent version.</p>
-              </div>
+      <div>
+        <div className="bg-white border border-border rounded-xl p-5 shadow-sm">
+          <div className="flex items-center gap-3.5 mb-3.5">
+            <div className="w-9 h-9 bg-blue-pale rounded-lg flex items-center justify-center text-blue">
+              <AirVent size={18} />
             </div>
-            <div className="bg-white border border-dashed border-border rounded-xl p-5 text-center text-text-muted text-[13px]">
-              <strong className="block text-sm font-semibold text-text-secondary mb-1">Work in progress</strong>
-              Specific pulmonary parameters (e.g. spirometry, DLCO, CT findings) will be added here.
+            <div>
+              <h3 className="font-heading text-[15px] font-semibold text-navy">Pulmonary parameters</h3>
+              <p className="text-[13px] text-text-muted mt-0.5">This section is a placeholder and will be completed in a subsequent version.</p>
             </div>
+          </div>
+          <div className="bg-white border border-dashed border-border rounded-xl p-5 text-center text-text-muted text-[13px]">
+            <strong className="block text-sm font-semibold text-text-secondary mb-1">Work in progress</strong>
+            Specific pulmonary parameters (e.g. spirometry, DLCO, CT findings) will be added here.
           </div>
         </div>
       </div>
 
-      <div className="flex gap-[18px] items-start opacity-40 pointer-events-none">
-        <div className="flex flex-col items-center shrink-0 w-8">
-          <div className="w-8 h-8 bg-white border-2 border-border rounded-full flex items-center justify-center text-text-muted">
-            <Flag size={14} />
+      <div className="mt-5 opacity-40 pointer-events-none">
+        <div className="bg-white border border-dashed border-border rounded-xl p-5 flex items-center justify-between">
+          <div>
+            <h3 className="font-heading text-[15px] font-semibold text-text-secondary">Pulmonary risk assessment</h3>
+            <p className="text-[13px] text-text-muted mt-0.5">The result will appear here once the section is fully implemented.</p>
           </div>
-        </div>
-        <div className="flex-1 mb-5">
-          <div className="bg-white border border-dashed border-border rounded-xl p-5 flex items-center justify-between">
-            <div>
-              <h3 className="font-heading text-[15px] font-semibold text-text-secondary">Pulmonary risk assessment</h3>
-              <p className="text-[13px] text-text-muted mt-0.5">The result will appear here once the section is fully implemented.</p>
-            </div>
-            <Lock size={18} className="text-text-muted shrink-0" />
-          </div>
+          <Lock size={18} className="text-text-muted shrink-0" />
         </div>
       </div>
     </div>

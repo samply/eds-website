@@ -23,7 +23,7 @@ export default function App() {
 
         <div className="flex flex-1" style={{ minHeight: 'calc(100vh - 60px)' }}>
           <Sidebar />
-          <main className="flex-1 px-10 py-9 max-w-[1100px]">
+          <main className="flex-1 px-10 pt-9 pb-16 max-w-[1100px]">
             <Switch>
               <Route path="/score">
                 <ScorePage values={scoreValues} onValuesChange={setScoreValues} />
