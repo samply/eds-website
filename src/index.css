@@ -1,1 +1,39 @@
 @import "tailwindcss";
+
+@theme {
+  /* Colors — custom tokens */
+  --color-navy: #1a2b4a;
+  --color-navy-mid: #2c3e6b;
+  --color-blue: #3b5fc0;
+  --color-blue-light: #4e72d8;
+  --color-blue-pale: #e8eef9;
+  --color-accent-red: #e05252;
+  --color-accent-orange: #e8893a;
+  --color-accent-green: #3aaa6b;
+  --color-text-primary: #1a2b4a;
+  --color-text-secondary: #5a6a8a;
+  --color-text-muted: #8a9ab8;
+  --color-border: #dde4f0;
+  --color-bg: #f5f7fb;
+
+  /* Shadows — override built-ins with original page values */
+  --shadow-sm: 0 1px 4px rgba(26,43,74,0.08);
+  --shadow-md: 0 4px 16px rgba(26,43,74,0.10);
+  --shadow-lg: 0 8px 32px rgba(26,43,74,0.13);
+}
+
+/* Base body styles */
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--color-bg, #f5f7fb);
+  color: var(--color-text-primary, #1a2b4a);
+  min-height: 100vh;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* Sora font for headings */
+h1, h2, h3, h4, h5, h6,
+.font-heading {
+  font-family: 'Sora', sans-serif;
+}
