@@ -11,17 +11,6 @@ export default function ScorePage() {
   const [values, setValues] = useState<FormValues>(DEFAULT_FORM_VALUES);
   const [result, setResult] = useState<ResultData | null>(null);
 
-  const handleSpin = (field: keyof FormValues, delta: number) => {
-    setValues((prev) => {
-      const current = parseFloat(prev[field] as string) || 0;
-      const decimals = delta % 1 !== 0 ? 1 : 0;
-      return {
-        ...prev,
-        [field]: String(Math.max(0, current + delta).toFixed(decimals)),
-      };
-    });
-  };
-
   const handleTextChange = (field: keyof FormValues, value: string) => {
     setValues((prev) => ({ ...prev, [field]: value }));
   };
@@ -67,20 +56,6 @@ export default function ScorePage() {
               className="flex-1 px-3 py-2 border-none outline-none font-[DM_Sans,sans-serif] text-sm text-text-primary bg-transparent"
             />
             <div className="px-3 py-2 text-[13px] text-text-muted bg-bg border-l border-border whitespace-nowrap">µg/L</div>
-            <div className="flex flex-col border-l border-border">
-              <button
-                onClick={() => handleSpin('tryptase', 0.1)}
-                className="flex-1 w-7 border-none bg-transparent cursor-pointer text-text-muted text-[10px] leading-none flex items-center justify-center hover:bg-blue-pale hover:text-blue transition-[background,color] duration-100 p-0"
-              >
-                ▲
-              </button>
-              <button
-                onClick={() => handleSpin('tryptase', -0.1)}
-                className="flex-1 w-7 border-none bg-transparent cursor-pointer text-text-muted text-[10px] leading-none flex items-center justify-center hover:bg-blue-pale hover:text-blue transition-[background,color] duration-100 p-0"
-              >
-                ▼
-              </button>
-            </div>
           </div>
         </div>
 
@@ -101,20 +76,6 @@ export default function ScorePage() {
               className="flex-1 px-3 py-2 border-none outline-none font-[DM_Sans,sans-serif] text-sm text-text-primary bg-transparent"
             />
             <div className="px-3 py-2 text-[13px] text-text-muted bg-bg border-l border-border whitespace-nowrap">kU/L</div>
-            <div className="flex flex-col border-l border-border">
-              <button
-                onClick={() => handleSpin('ige', 1)}
-                className="flex-1 w-7 border-none bg-transparent cursor-pointer text-text-muted text-[10px] leading-none flex items-center justify-center hover:bg-blue-pale hover:text-blue transition-[background,color] duration-100 p-0"
-              >
-                ▲
-              </button>
-              <button
-                onClick={() => handleSpin('ige', -1)}
-                className="flex-1 w-7 border-none bg-transparent cursor-pointer text-text-muted text-[10px] leading-none flex items-center justify-center hover:bg-blue-pale hover:text-blue transition-[background,color] duration-100 p-0"
-              >
-                ▼
-              </button>
-            </div>
           </div>
         </div>
 
@@ -135,20 +96,6 @@ export default function ScorePage() {
               className="flex-1 px-3 py-2 border-none outline-none font-[DM_Sans,sans-serif] text-sm text-text-primary bg-transparent"
             />
             <div className="px-3 py-2 text-[13px] text-text-muted bg-bg border-l border-border whitespace-nowrap">U/L</div>
-            <div className="flex flex-col border-l border-border">
-              <button
-                onClick={() => handleSpin('ldh', 1)}
-                className="flex-1 w-7 border-none bg-transparent cursor-pointer text-text-muted text-[10px] leading-none flex items-center justify-center hover:bg-blue-pale hover:text-blue transition-[background,color] duration-100 p-0"
-              >
-                ▲
-              </button>
-              <button
-                onClick={() => handleSpin('ldh', -1)}
-                className="flex-1 w-7 border-none bg-transparent cursor-pointer text-text-muted text-[10px] leading-none flex items-center justify-center hover:bg-blue-pale hover:text-blue transition-[background,color] duration-100 p-0"
-              >
-                ▼
-              </button>
-            </div>
           </div>
         </div>
 
@@ -169,20 +116,6 @@ export default function ScorePage() {
               className="flex-1 px-3 py-2 border-none outline-none font-[DM_Sans,sans-serif] text-sm text-text-primary bg-transparent"
             />
             <div className="px-3 py-2 text-[13px] text-text-muted bg-bg border-l border-border whitespace-nowrap">pmol/L</div>
-            <div className="flex flex-col border-l border-border">
-              <button
-                onClick={() => handleSpin('b12', 1)}
-                className="flex-1 w-7 border-none bg-transparent cursor-pointer text-text-muted text-[10px] leading-none flex items-center justify-center hover:bg-blue-pale hover:text-blue transition-[background,color] duration-100 p-0"
-              >
-                ▲
-              </button>
-              <button
-                onClick={() => handleSpin('b12', -1)}
-                className="flex-1 w-7 border-none bg-transparent cursor-pointer text-text-muted text-[10px] leading-none flex items-center justify-center hover:bg-blue-pale hover:text-blue transition-[background,color] duration-100 p-0"
-              >
-                ▼
-              </button>
-            </div>
           </div>
         </div>
 
@@ -207,7 +140,7 @@ export default function ScorePage() {
               <option value="5">5</option>
               <option value="6">≥ 6</option>
             </select>
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 border-l-4 border-r-4 border-t-[5px] border-text-muted pointer-events-none" />
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 w-0 h-0 border-l-4 border-r-4 border-t-[5px] border-l-transparent border-r-transparent border-t-text-muted pointer-events-none" />
           </div>
         </div>
 

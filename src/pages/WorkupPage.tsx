@@ -618,7 +618,7 @@ function CardiacWorkup() {
                     <option value="yes">Positive</option>
                     <option value="no">Negative / not done</option>
                   </select>
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2 border-l-4 border-r-4 border-t-[5px] border-text-muted pointer-events-none" />
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 w-0 h-0 border-l-4 border-r-4 border-t-[5px] border-l-transparent border-r-transparent border-t-text-muted pointer-events-none" />
                 </div>
               </div>
             </div>
