@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
-import { Info, ChevronDown, Dna, Heart, AirVent, ArrowRight, Flag, Lock, MessageCircle } from 'lucide-react';
+import { Info, ChevronDown, Dna, Heart, AirVent, ArrowRight, Flag, Lock } from 'lucide-react';
 
 /* ── Main WorkupPage ── */
 export default function WorkupPage() {
@@ -543,14 +543,6 @@ function CardiacWorkup() {
   }
 
   const riskLabel = score === 0 ? 'Low cardiac risk' : score <= 3 ? 'Intermediate cardiac risk' : 'High cardiac risk';
-  const riskColor = score === 0 ? 'var(--color-accent-green)' : score <= 3 ? 'var(--color-accent-orange)' : 'var(--color-accent-red)';
-  const riskBg = score === 0 ? '#edf9f2' : score <= 3 ? '#fff5ec' : '#fdf0f0';
-
-  const recText = score === 0
-    ? 'Routine cardiac follow-up is recommended. No immediate intensification of therapy required based on cardiac risk score alone.'
-    : score <= 3
-    ? 'Closer cardiological monitoring is recommended. Reassess need for therapy intensification based on full clinical picture.'
-    : 'Intensified cardiological monitoring is strongly recommended. Therapy escalation should be considered promptly to prevent further eosinophil-mediated cardiac damage.';
 
   const handleInput = () => {
     if (canCompute && !showResult) setShowResult(true);
@@ -649,22 +641,12 @@ function CardiacWorkup() {
 
             {showResult && canCompute && (
               <div>
-                <div
-                  className="inline-flex items-center gap-2 px-[18px] py-2.5 rounded-lg font-bold text-base mb-3.5"
-                  style={{ background: riskBg, color: riskColor, border: `1.5px solid ${riskColor}` }}
-                >
+                <div className="inline-flex items-center gap-2 px-[18px] py-2.5 rounded-lg font-bold text-base mb-3.5 bg-bg text-navy border border-border">
                   {riskLabel} (Score: {score})
                 </div>
                 <div className="text-[13px] text-text-secondary mb-3.5">
                   <strong>Score components:</strong> {details.length ? details.join(' · ') : 'No points scored'} &nbsp;|&nbsp;{' '}
                   <strong>Total: {score} point{score !== 1 ? 's' : ''}</strong>
-                </div>
-                <div className="flex items-start gap-3.5 bg-bg border border-border rounded-lg p-3.5">
-                  <MessageCircle size={20} className="text-blue shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="block text-[13px] font-bold text-navy mb-0.5">Clinical recommendation</strong>
-                    <p className="text-[13px] text-text-secondary">{recText}</p>
-                  </div>
                 </div>
                 <p className="mt-2.5 text-[11px] text-text-muted italic">
                   ⚠ This cardiac risk score has not yet been formally validated and should be interpreted with caution. It is intended as a preliminary clinical support tool only.

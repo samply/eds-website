@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { Info, Calculator } from 'lucide-react';
+import { Link } from 'wouter';
+import { Info, Calculator, ExternalLink } from 'lucide-react';
 import { DEFAULT_FORM_VALUES } from '../types';
 import type { FormValues, ResultData } from '../types';
 import { calculateResult } from '../utils/scoring';
 import Gauge from '../components/Gauge';
-import ProbabilityScale from '../components/ProbabilityScale';
 import ContributionCards from '../components/ContributionCards';
 
 export default function ScorePage() {
@@ -249,32 +249,25 @@ export default function ScorePage() {
               </div>
 
               <div className="flex-1">
-                <div className="font-heading text-xl font-bold text-navy mb-1">Probability of clonal eosinophilia</div>
-                <div className={`text-[22px] font-bold mb-4 ${
-                  result.levelClass === 'high' ? 'text-accent-red' : 'text-accent-green'
-                }`}>
-                  {result.level}
+                <div className="font-heading text-xl font-bold text-navy mb-1">Eosinophilia Differentiation Score</div>
+                <div className="flex items-baseline gap-1.5 mb-4">
+                  <span className="text-[48px] font-bold text-navy leading-none">{Math.round(result.probability * 100)}</span>
+                  <span className="text-lg font-semibold text-text-muted">/ 100</span>
                 </div>
-                <div
-                  className="text-sm text-text-secondary mb-[18px] leading-relaxed"
-                  dangerouslySetInnerHTML={{ __html: result.description }}
-                />
-                <div className="flex items-start gap-3.5 bg-bg border border-border rounded-lg p-3.5">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-blue shrink-0 mt-0.5">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                  </svg>
-                  <div>
-                    <strong className="block text-[13px] font-bold text-navy mb-0.5">Recommendation</strong>
-                    <p className="text-[13px] text-text-secondary">{result.recommendation}</p>
-                  </div>
-                </div>
+                <p className="text-sm text-text-secondary mb-[18px] leading-relaxed">
+                  The Eosinophilia Differentiation Score (EDS) is a multivariate tool that estimates the likelihood of
+                  clonal eosinophilia based on routinely available clinical parameters. It is intended as a supportive
+                  reference and should be interpreted in the full clinical context.
+                </p>
+                <Link
+                  to="/methods"
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-blue hover:text-blue-dark transition-colors duration-150"
+                >
+                  <ExternalLink size={15} />
+                  View methods & interpretation
+                </Link>
               </div>
             </div>
-
-            <hr className="border-t border-border my-6" />
-
-            {/* Probability scale */}
-            <ProbabilityScale percentage={Math.round(result.probability * 100)} />
 
             <hr className="border-t border-border my-6" />
 

@@ -36,12 +36,12 @@ export default function ContributionCards({ contributions }: ContributionCardsPr
               <div className="text-xs font-semibold text-text-primary text-center leading-tight">
                 {c.name}
               </div>
-              <div className={`text-base font-bold ${isPos ? 'text-accent-red' : 'text-accent-green'}`}>
+              <div className={`text-base font-bold ${isPos ? 'text-blue' : 'text-text-secondary'}`}>
                 {c.pct >= 0 ? '+' : ''}{c.pct} %
               </div>
               <div className="w-full h-1 bg-border rounded-full overflow-hidden">
                 <div
-                  className={`h-full rounded-full transition-all duration-600 ease-out ${isPos ? 'bg-accent-red' : 'bg-accent-green'}`}
+                  className={`h-full rounded-full transition-all duration-600 ease-out ${isPos ? 'bg-blue' : 'bg-text-secondary'}`}
                   style={{ width: `${barWidth}%` }}
                 />
               </div>

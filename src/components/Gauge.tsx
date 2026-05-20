@@ -28,18 +28,10 @@ export default function Gauge({ percentage }: GaugeProps) {
 
   return (
     <svg className="w-[170px] h-[170px]" viewBox="0 0 170 170">
-      <defs>
-        <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#3aaa6b" />
-          <stop offset="35%" stopColor="#ffcc02" />
-          <stop offset="65%" stopColor="#e8893a" />
-          <stop offset="100%" stopColor="#e05252" />
-        </linearGradient>
-      </defs>
       {/* Track */}
       <path d={trackD} fill="none" stroke="#e8eef9" strokeWidth="14" strokeLinecap="round" />
       {/* Fill */}
-      <path d={fillD} fill="none" stroke="url(#gaugeGrad)" strokeWidth="14" strokeLinecap="round" />
+      <path d={fillD} fill="none" stroke="#2563eb" strokeWidth="14" strokeLinecap="round" />
       {/* Needle dot */}
       <circle cx={dot.x} cy={dot.y} r="7" fill="white" stroke="#1a2b4a" strokeWidth="3" />
       {/* Text */}
