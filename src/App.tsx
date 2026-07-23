@@ -4,7 +4,6 @@ import { useHashLocation } from 'wouter/use-hash-location';
 import { DEFAULT_FORM_VALUES } from './types';
 import type { FormValues } from './types';
 import Header from './components/Header';
-import Sidebar from './components/Sidebar';
 import Footer from './components/Footer';
 import Modal from './components/Modal';
 import ScorePage from './pages/ScorePage';
@@ -21,9 +20,7 @@ export default function App() {
       <div className="min-h-screen flex flex-col">
         <Header onAbout={() => setAboutOpen(true)} />
 
-        <div className="flex flex-1" style={{ minHeight: 'calc(100vh - 60px)' }}>
-          <Sidebar />
-          <main className="flex-1 px-10 pt-9 pb-16 max-w-[1100px]">
+        <main className="flex-1 px-4 sm:px-6 lg:px-10 pt-6 sm:pt-9 pb-8 sm:pb-10 max-w-[1100px] mx-auto w-full">
             <Switch>
               <Route path="/score">
                 <ScorePage values={scoreValues} onValuesChange={setScoreValues} />
@@ -42,7 +39,6 @@ export default function App() {
               </Route>
             </Switch>
           </main>
-        </div>
 
         <Footer />
 
@@ -53,11 +49,7 @@ export default function App() {
               Eosinophilia Differentiation Score (EDS)
             </p>
             <p>
-              A clinical decision support tool for distinguishing clonal from non-clonal eosinophilia based on seven
-              laboratory and clinical variables.
-            </p>
-            <p>
-              This tool supports clinical decision-making but does not replace the physician's judgment.
+              The Eosinophilia Differentiation Score (EDS) is a tool for distinguishing clonal from non-clonal eosinophilia derived from factors associated with clonal versus non-clonal eosinophilia in the underlying study cohort.
             </p>
           </div>
         </Modal>

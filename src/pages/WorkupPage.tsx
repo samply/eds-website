@@ -1,9 +1,239 @@
 import { useState, useRef, useCallback } from 'react';
-import { ChevronDown, Dna, Heart, AirVent, Lock } from 'lucide-react';
+import { ChevronDown, Dna, Database, Heart, Wind, Stethoscope, Brain, Zap, UtensilsCrossed, Sun, Droplets, Shield, CircleDot } from 'lucide-react';
+
+/* ── Clinical tab types & data ── */
+type TabId = 'cardiac' | 'pulmonary' | 'ent' | 'gi' | 'skin' | 'kidney' | 'pns' | 'cns' | 'spleen' | 'lymph';
+
+const TAB_ICONS: Record<TabId, React.ReactNode> = {
+  cardiac: <Heart size={15} />,
+  pulmonary: <Wind size={15} />,
+  ent: <Stethoscope size={15} />,
+  gi: <UtensilsCrossed size={15} />,
+  skin: <Sun size={15} />,
+  kidney: <Droplets size={15} />,
+  pns: <Zap size={15} />,
+  cns: <Brain size={15} />,
+  spleen: <Shield size={15} />,
+  lymph: <CircleDot size={15} />,
+};
+
+const TABS: { id: TabId; label: string; cardTitle?: string }[] = [
+  { id: 'cardiac', label: 'Cardiac involvement' },
+  { id: 'pulmonary', label: 'Pulmonary involvement' },
+  { id: 'ent', label: 'ENT involvement', cardTitle: 'Ear-nose-throat (ENT) involvement' },
+  { id: 'gi', label: 'Gastrointestinal incl. liver', cardTitle: 'Gastrointestinal involvement including liver involvement' },
+  { id: 'skin', label: 'Skin involvement' },
+  { id: 'kidney', label: 'Kidney involvement' },
+  { id: 'pns', label: 'PNS involvement' },
+  { id: 'cns', label: 'CNS involvement' },
+  { id: 'spleen', label: 'Spleen involvement' },
+  { id: 'lymph', label: 'Lymph node involvement' },
+];
+
+interface TabRow { modality: string; findings: string }
+interface TabData { rows: TabRow[]; references: string[] }
+
+const tabData: Record<TabId, TabData> = {
+  cardiac: {
+    rows: [
+      { modality: 'Biopsy', findings: 'e.g., eosinophilic infiltration, eosinophilic inflammation, fibrotic changes, necrosis' },
+      { modality: 'Magnetic resonance imaging (MRI)', findings: 'e.g., late gadolinium enhancement, thrombus, pericardial effusion, reduced ejection fraction, signs of myocardial edema' },
+      { modality: 'Echocardiography', findings: 'e.g., valvular heart disease, reduced ejection fraction, pericardial effusion' },
+      { modality: 'Laboratory parameters', findings: 'elevated high-sensitivity troponin (hsTNI) and (glomerular filtration rate-corrected) N-terminal prohormone B-type natriuretic peptide (NT-proBNP)' },
+      { modality: 'Electrocardiography (ECG)', findings: 'e.g., arrhythmia, low voltage, ST-segment abnormalities' },
+    ],
+    references: [
+      'Bishop, G. G., Bergin, J. D., & Kramer, C. M. (2001). Hypereosinophilic syndrome and restrictive cardiomyopathy due to apical thrombi. Circulation, 104(2), E3-4.',
+      'Cereda, A. F., Pedrotti, P., De Capitani, L., Giannattasio, C., & Roghi, A. (2017). Comprehensive evaluation of cardiac involvement in eosinophilic granulomatosis with polyangiitis (EGPA) with cardiac magnetic resonance. Eur J Intern Med, 39, 51-56.',
+      'Cheung, C. C., Constantine, M., Ahmadi, A., Shiau, C., & Chen, L. Y. C. (2017). Eosinophilic Myocarditis. Am J Med Sci, 354(5), 486-492.',
+      'Dennert, R. M., van Paassen, P., Schalla, S., et al. (2010). Cardiac involvement in Churg-Strauss syndrome. Arthritis Rheum, 62(2), 627-634.',
+      'Garcia-Vives, E., Rodriguez-Palomares, J. F., Harty, L., Solans-Laque, R., & Jayne, D. (2021). Heart disease in eosinophilic granulomatosis with polyangiitis (EGPA) patients: a screening approach proposal. Rheumatology (Oxford), 60(10), 4538-4547.',
+      'Groh, M., Rohmer, J., Etienne, N., et al. (2023). French guidelines for the etiological workup of eosinophilia and the management of hypereosinophilic syndromes. Orphanet J Rare Dis, 18(1), 100.',
+      'Hazebroek, M. R., Kemna, M. J., Schalla, S., et al. (2015). Prevalence and prognostic relevance of cardiac involvement in ANCA-associated vasculitis. Int J Cardiol, 199, 170-179.',
+      'Kleinfeldt, T., Nienaber, C. A., Kische, S., et al. (2010). Cardiac manifestation of the hypereosinophilic syndrome: new insights. Clin Res Cardiol, 99(7), 419-427.',
+      'Lefèvre, G., Bleuse, S., Puyade, M., et al. (2025). Hypereosinophilia and Hypereosinophilic Syndromes: First Findings From a Nationwide Multicenter Cohort. Allergy, 80(4), 1100-1110.',
+      'Mankad, R., Bonnichsen, C., & Mankad, S. (2016). Hypereosinophilic syndrome: cardiac diagnosis and management. Heart, 102(2), 100-106.',
+      'Valent, P., Klion, A. D., Roufosse, F., et al. (2023). Proposed refined diagnostic criteria and classification of eosinophil disorders and related syndromes. Allergy, 78(1), 47-59.',
+    ],
+  },
+  pulmonary: {
+    rows: [
+      { modality: 'Biopsy/Bronchoalveolar lavage (BAL)', findings: 'e.g., eosinophilic infiltration, eosinophilic inflammation, high number of eosinophils in BAL' },
+      { modality: 'Computed tomography (CT)', findings: 'e.g., parenchymal opacities, airway abnormalities, pleural effusion, nodules, emphysema' },
+      { modality: 'X-ray', findings: 'e.g., parenchymal opacities, airway abnormalities, pleural effusion, nodules' },
+      { modality: 'Respiratory function test (RFT)', findings: 'e.g., reduced forced expiratory volume in 1 second (FEV1), reduced Tiffeneau-index, increased airway resistance, increased fractional exhaled nitric oxide (FeNO)' },
+    ],
+    references: [
+      'Cottin, V., Bel, E., Bottero, P., et al. (2016). Respiratory manifestations of eosinophilic granulomatosis with polyangiitis (Churg-Strauss). Eur Respir J, 48(5), 1429-1441.',
+      'Emmi, G., Bass, J., Baratella, E., Akuthota, P., & Loscocco, G. G. (2026). Differential Diagnosis of Eosinophilic Lung Diseases. J Allergy Clin Immunol Pract, 14(3), 542-557.',
+      'Groh, M., Rohmer, J., Etienne, N., et al. (2023). French guidelines for the etiological workup of eosinophilia. Orphanet J Rare Dis, 18(1), 100.',
+      'Lefèvre, G., Bleuse, S., Puyade, M., et al. (2025). Hypereosinophilia and Hypereosinophilic Syndromes. Allergy, 80(4), 1100-1110.',
+      'Valent, P., Klion, A. D., Roufosse, F., et al. (2023). Proposed refined diagnostic criteria. Allergy, 78(1), 47-59.',
+    ],
+  },
+  ent: {
+    rows: [
+      { modality: 'Biopsy', findings: 'e.g., eosinophilic infiltration of nasal mucosa, eosinophilic inflammation in nasal polyps, tissue remodeling, fibrosis' },
+      { modality: 'CT', findings: 'e.g., signs of mucosal thickening, polypoid proliferation, air-fluid levels in acute sinusitis' },
+      { modality: 'Rhinoscopy', findings: 'e.g., signs of mucosal inflammation, evidence of nasal polyposis' },
+    ],
+    references: [
+      'Bacciu, A., Bacciu, S., Mercante, G., et al. (2006). Ear, nose and throat manifestations of Churg-Strauss syndrome. Acta Otolaryngol, 126(5), 503-509.',
+      'Cottin, V., Bel, E., Bottero, P., et al. (2016). Respiratory manifestations of eosinophilic granulomatosis with polyangiitis. Eur Respir J, 48(5), 1429-1441.',
+      "D'Onofrio, M., La Prova, D., Galdiero, M. R., et al. (2023). Early Ear, Nose and Throat Manifestations in EGPA. J Clin Med, 12(22).",
+      'Fokkens, W. J., Lund, V. J., Hopkins, C., et al. (2020). European Position Paper on Rhinosinusitis and Nasal Polyps 2020. Rhinology, 58(Suppl S29), 1-464.',
+      'Lefèvre, G., Bleuse, S., Puyade, M., et al. (2025). Hypereosinophilia and Hypereosinophilic Syndromes. Allergy, 80(4), 1100-1110.',
+      'Nakamaru, Y., Takagi, D., Suzuki, M., et al. (2016). Otologic and Rhinologic Manifestations of EGPA. Audiol Neurootol, 21(1), 45-53.',
+    ],
+  },
+  gi: {
+    rows: [
+      { modality: 'Biopsy/Ascites punction', findings: 'e.g., eosinophilic tissue infiltration, eosinophilic crypt abscesses, elevated eosinophils in ascites' },
+      { modality: 'CT', findings: 'e.g., bowel wall thickening, ascites' },
+      { modality: 'Sonography', findings: 'e.g., ascites, diffuse bowel wall thickening of small and/or large bowel with preserved wall stratification' },
+      { modality: 'Endoscopy', findings: 'e.g., edema, erosions, ulcerations, polypoid lesions, giant gastric folds (antrum/peripyloric)' },
+    ],
+    references: [
+      'Groh, M., Rohmer, J., Etienne, N., et al. (2023). French guidelines for the etiological workup of eosinophilia. Orphanet J Rare Dis, 18(1), 100.',
+      'Kuang, F. L., Curtin, B. F., Alao, H., et al. (2020). Single-Organ and Multisystem HES Patients with GI Manifestations. J Allergy Clin Immunol Pract, 8(8), 2718-2726.',
+      'Lefèvre, G., Bleuse, S., Puyade, M., et al. (2025). Hypereosinophilia and Hypereosinophilic Syndromes. Allergy, 80(4), 1100-1110.',
+      'Nanagas, V. C., & Kovalszki, A. (2019). Gastrointestinal Manifestations of HES and Mast Cell Disorders. Clin Rev Allergy Immunol, 57(2), 194-212.',
+      'Valent, P., Klion, A. D., Roufosse, F., et al. (2023). Proposed refined diagnostic criteria. Allergy, 78(1), 47-59.',
+    ],
+  },
+  skin: {
+    rows: [
+      { modality: 'Biopsy', findings: 'e.g., perivascular/interstitial eosinophilic inflammatory infiltrate, epidermal necrosis' },
+      { modality: 'Clinical examination', findings: 'e.g., pruritus, urticarial lesions, maculopapular lesions, erythroderma' },
+    ],
+    references: [
+      'Brunetto, S., Buta, F., Gangemi, S., & Ricciardi, L. (2025). Immunological Markers Associated with Skin Manifestations of EGPA. Int J Mol Sci, 26(15).',
+      'Groh, M., Rohmer, J., Etienne, N., et al. (2023). French guidelines for the etiological workup of eosinophilia. Orphanet J Rare Dis, 18(1), 100.',
+      'Lefèvre, G., Bleuse, S., Puyade, M., et al. (2025). Hypereosinophilia and Hypereosinophilic Syndromes. Allergy, 80(4), 1100-1110.',
+      'Leiferman, K. M., & Peters, M. S. (2018). Eosinophil-Related Disease and the Skin. J Allergy Clin Immunol Pract, 6(5), 1462-1482.',
+      'Valent, P., Klion, A. D., Roufosse, F., et al. (2023). Proposed refined diagnostic criteria. Allergy, 78(1), 47-59.',
+    ],
+  },
+  kidney: {
+    rows: [
+      { modality: 'Biopsy', findings: 'e.g., eosinophilic interstitial nephritis, glomerular thrombosis and necrosis, tubulointerstitial nephritis, tubular atrophy' },
+      { modality: 'Laboratory examinations', findings: 'e.g., impaired renal function, creatinine elevation, proteinuria in urine diagnostics' },
+    ],
+    references: [
+      'Durel, C. A., Sinico, R. A., Teixeira, V., et al. (2021). Renal involvement in EGPA: a multicentric retrospective study of 63 biopsy-proven cases. Rheumatology (Oxford), 60(1), 359-365.',
+      'Gauckler, P., Shin, J. I., Mayer, G., & Kronbichler, A. (2018). Eosinophilia and Kidney Disease. J Clin Med, 7(12).',
+      'Lefèvre, G., Bleuse, S., Puyade, M., et al. (2025). Hypereosinophilia and Hypereosinophilic Syndromes. Allergy, 80(4), 1100-1110.',
+      "Reggiani, F., L'Imperio, V., Calatroni, M., Pagni, F., & Sinico, R. A. (2023). Renal involvement in EGPA. Front Med (Lausanne), 10, 1244651.",
+      'Wu, Q. S., Yu, Z. L., Lin, X., Wu, Z. L., & Yang, L. (2026). Renal involvement in HES: a systematic review. Front Immunol, 17, 1820583.',
+    ],
+  },
+  pns: {
+    rows: [
+      { modality: 'Biopsy', findings: 'e.g., axonal degeneration, demyelination, non-vasculitic eosinophilic infiltrates, endoneurinal edema' },
+      { modality: 'Electrophysiology', findings: 'e.g., reduced amplitudes of sensory/motor evoked responses, abnormal conduction velocity, axonal polyneuropathy' },
+      { modality: 'Clinical examination', findings: 'e.g., evidence of polyneuropathy without other cause, radiculopathy, mononeuritis multiplex' },
+    ],
+    references: [
+      'Bennett, D. L., Groves, M., Blake, J., et al. (2008). The use of nerve and muscle biopsy in the diagnosis of vasculitis. J Neurol Neurosurg Psychiatry, 79(12), 1376-1381.',
+      'Groh, M., Rohmer, J., Etienne, N., et al. (2023). French guidelines for the etiological workup of eosinophilia. Orphanet J Rare Dis, 18(1), 100.',
+      'Lefèvre, G., Bleuse, S., Puyade, M., et al. (2025). Hypereosinophilia and Hypereosinophilic Syndromes. Allergy, 80(4), 1100-1110.',
+      'Monaco, S., Lucci, B., Laperchia, N., et al. (1988). Polyneuropathy in hypereosinophilic syndrome. Neurology, 38(3), 494-496.',
+    ],
+  },
+  cns: {
+    rows: [
+      { modality: 'Biopsy/Cerebrospinal fluid (CSF)', findings: 'e.g., thromboembolic occlusion of small arteries, petechial hemorrhages, granulomatous inflammation, eosinophilic invasion into CSF (rare)' },
+      { modality: 'CT', findings: 'e.g., hypodense areas in watershed/border-zone distribution, cortical and subcortical ischemic lesions' },
+      { modality: 'MRI', findings: 'e.g., ischemic lesions, cerebral infarction' },
+      { modality: 'Clinical examination', findings: 'e.g., hemiparesis, hemiplegia, dysarthria, seizure' },
+    ],
+    references: [
+      'Chen, H., Raza, H. K., Jing, J., et al. (2017). HES with central nervous system involvement. Brain Inj, 31(12), 1695-1700.',
+      'Groh, M., Rohmer, J., Etienne, N., et al. (2023). French guidelines for the etiological workup of eosinophilia. Orphanet J Rare Dis, 18(1), 100.',
+      'Lee, D., & Ahn, T. B. (2014). Central nervous system involvement of HES. J Neurol Sci, 347(1-2), 281-287.',
+      'Lefèvre, G., Bleuse, S., Puyade, M., et al. (2025). Hypereosinophilia and Hypereosinophilic Syndromes. Allergy, 80(4), 1100-1110.',
+      'Liu, S., Guo, L., Fan, X., et al. (2021). Clinical features of CNS involvement in EGPA. Orphanet J Rare Dis, 16(1), 152.',
+    ],
+  },
+  spleen: {
+    rows: [
+      { modality: 'CT', findings: 'splenomegaly' },
+      { modality: 'Sonography', findings: 'splenomegaly' },
+      { modality: 'Clinical examination', findings: 'palpable spleen below costal arch' },
+    ],
+    references: [
+      'Groh, M., Rohmer, J., Etienne, N., et al. (2023). French guidelines for the etiological workup of eosinophilia. Orphanet J Rare Dis, 18(1), 100.',
+      'Lefèvre, G., Bleuse, S., Puyade, M., et al. (2025). Hypereosinophilia and Hypereosinophilic Syndromes. Allergy, 80(4), 1100-1110.',
+      'Metzgeroth, G., Steiner, L., Naumann, N., et al. (2023). Myeloid/lymphoid neoplasms with eosinophilia and TK gene fusions. Leukemia, 37(9), 1860-1867.',
+      'Ogbogu, P. U., Bochner, B. S., Butterfield, J. H., et al. (2009). HES: a multicenter, retrospective analysis. J Allergy Clin Immunol, 124(6), 1319-1325.',
+    ],
+  },
+  lymph: {
+    rows: [
+      { modality: 'CT', findings: 'significant/suspect lymphadenopathy' },
+      { modality: 'Sonography', findings: 'significant/suspect lymphadenopathy' },
+      { modality: 'Clinical examination', findings: 'palpable lymph nodes' },
+    ],
+    references: [
+      'Groh, M., Rohmer, J., Etienne, N., et al. (2023). French guidelines for the etiological workup of eosinophilia. Orphanet J Rare Dis, 18(1), 100.',
+      'Lefèvre, G., Bleuse, S., Puyade, M., et al. (2025). Hypereosinophilia and Hypereosinophilic Syndromes. Allergy, 80(4), 1100-1110.',
+      'Metzgeroth, G., Steiner, L., Naumann, N., et al. (2023). Myeloid/lymphoid neoplasms with eosinophilia and TK gene fusions. Leukemia, 37(9), 1860-1867.',
+      'Ogbogu, P. U., Bochner, B. S., Butterfield, J. H., et al. (2009). HES: a multicenter, retrospective analysis. J Allergy Clin Immunol, 124(6), 1319-1325.',
+    ],
+  },
+};
+
+/* ── Collapsible References ── */
+function CollapsibleRefs({ refs }: { refs: string[] }) {
+  const [open, setOpen] = useState(false);
+  if (!refs.length) return null;
+  return (
+    <div className="mt-4">
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex items-center gap-1.5 text-xs font-medium text-text-muted hover:text-blue transition-colors duration-150"
+      >
+        <ChevronDown size={12} strokeWidth={2.5} className={`transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+        References ({refs.length})
+      </button>
+      {open && (
+        <div className="mt-2.5 text-[11px] text-text-muted leading-relaxed space-y-1.5 border-l-2 border-border pl-3 animate-fade-in">
+          {refs.map((r, i) => (
+            <p key={i} className="m-0">{r}</p>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── Diagnostic Table ── */
+function DiagnosticTable({ rows }: { rows: TabRow[] }) {
+  return (
+    <table className="w-full border-collapse text-xs mb-6">
+      <thead>
+        <tr>
+          <th className="text-[11px] font-bold text-text-muted uppercase tracking-wider px-2 py-1.5 border-b border-border bg-bg text-left w-[35%]">Modality</th>
+          <th className="text-[11px] font-bold text-text-muted uppercase tracking-wider px-2 py-1.5 border-b border-border bg-bg text-left">Findings</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((row, i) => (
+          <tr key={i}>
+            <td className="px-2 py-1.5 text-text-secondary border-b border-border align-top font-medium">{row.modality}</td>
+            <td className="px-2 py-1.5 text-text-secondary border-b border-border align-top">{row.findings}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
 
 /* ── Main WorkupPage ── */
 export default function WorkupPage() {
-  const [activeTab, setActiveTab] = useState<'cardiac' | 'pulmonary'>('cardiac');
+  const [activeTab, setActiveTab] = useState<TabId>('cardiac');
+
+  const currentTab = tabData[activeTab];
 
   return (
     <div className="animate-fade-in">
@@ -11,46 +241,68 @@ export default function WorkupPage() {
         <h1 className="font-heading text-[26px] font-bold text-navy mb-1.5 tracking-tight">Diagnostic workup</h1>
       </div>
       <p className="text-sm text-text-secondary leading-relaxed mb-7 max-w-[700px]">
-        This stepwise approach supports the differential diagnosis of eosinophilia and helps to distinguish between
-        clonal and non-clonal eosinophilic disorders.
+        A stepwise approach supports the diagnostic workup of eosinophilia and helps to distinguish between clonal and non-clonal eosinophilia-associated disorders.
       </p>
 
       {/* Key diagnostic criteria */}
       <h2 className="font-heading text-[17px] font-semibold text-navy mb-4">Key diagnostic criteria (overview)</h2>
       <CriteriaAccordion />
 
+      {/* Criteria references (§4.1) */}
+      <CollapsibleRefs refs={[
+        'Arber, D. A., Orazi, A., Hasserjian, R. P., et al. (2022). International Consensus Classification of Myeloid Neoplasms and Acute Leukemias: integrating morphologic, clinical, and genomic data. Blood, 140(11), 1200-1228.',
+        'Grayson, P. C., Ponte, C., Suppiah, R., et al. (2022). 2022 American College of Rheumatology/European Alliance of Associations for Rheumatology Classification Criteria for Eosinophilic Granulomatosis with Polyangiitis. Ann Rheum Dis, 81(3), 309-314.',
+      ]} />
+
       {/* Genetic Workup */}
       <h2 className="font-heading text-[17px] font-semibold text-navy mt-7 mb-4">Genetic workup</h2>
       <GeneticWorkup />
 
+      {/* Genetic references (§4.3) */}
+      <CollapsibleRefs refs={[
+        'Baer, C., Muehlbacher, V., Kern, W., Haferlach, C., & Haferlach, T. (2018). Molecular genetic characterization of myeloid/lymphoid neoplasms associated with eosinophilia and rearrangement of PDGFRA, PDGFRB, FGFR1 or PCM1-JAK2. Haematologica, 103(8), e348-e350.',
+        'Cools, J., DeAngelo, D. J., Gotlib, J., et al. (2003). A tyrosine kinase created by fusion of the PDGFRA and FIP1L1 genes as a therapeutic target of imatinib. N Engl J Med, 348(13), 1201-1214.',
+        'Gerds, A. T., Gotlib, J., Bose, P., et al. (2020). Myeloid/Lymphoid Neoplasms with Eosinophilia and TK Fusion Genes, NCCN Guidelines. J Natl Compr Canc Netw, 18(9), 1248-1269.',
+        'Metzgeroth, G., Steiner, L., Naumann, N., et al. (2023). Myeloid/lymphoid neoplasms with eosinophilia and TK gene fusions. Leukemia, 37(9), 1860-1867.',
+        'Reiter, A., & Gotlib, J. (2017). Myeloid neoplasms with eosinophilia. Blood, 129(6), 704-714.',
+        'Reiter, A., Metzgeroth, G., & Cross, N. C. P. (2025). How I diagnose and treat myeloid/lymphoid neoplasms with TK gene fusions. Blood, 145(16), 1758-1768.',
+        'Rohmer, J., Couteau-Chardon, A., Trichereau, J., et al. (2020). Epidemiology, clinical picture and long-term outcomes of FIP1L1-PDGFRA-positive myeloid neoplasm with eosinophilia. Am J Hematol, 95(11), 1314-1323.',
+        'Schwaab, J., Naumann, N., Luebke, J., et al. (2020). Response to TKIs in myeloid neoplasms associated with PCM1-JAK2, BCR-JAK2 and ETV6-ABL1 fusion genes. Am J Hematol, 95(7), 824-833.',
+        'Shomali, W., & Gotlib, J. (2024). WHO and ICC classification of eosinophilic disorders: 2024 update. Am J Hematol, 99(5), 946-968.',
+        'Verstovsek, S., Kiladjian, J. J., Vannucchi, A. M., et al. (2025). Pemigatinib for Myeloid/Lymphoid Neoplasms with FGFR1 Rearrangement. NEJM Evid, 4(9), EVIDoa2500017.',
+      ]} />
+
       {/* Clinical Workup Tabs */}
       <h2 className="font-heading text-[17px] font-semibold text-navy mt-7 mb-4">Clinical workup</h2>
-      <div className="flex gap-2.5 mb-6">
-        <button
-          onClick={() => setActiveTab('cardiac')}
-          className={`flex items-center gap-2 px-[18px] py-2 border rounded-lg text-sm font-medium cursor-pointer transition-all duration-150 ${
-            activeTab === 'cardiac'
-              ? 'bg-navy border-navy text-white'
-              : 'bg-white border-border text-text-secondary hover:border-blue hover:text-blue hover:bg-blue-pale'
-          }`}
-        >
-          <Heart size={15} />
-          Cardiac involvement
-        </button>
-        <button
-          onClick={() => setActiveTab('pulmonary')}
-          className={`flex items-center gap-2 px-[18px] py-2 border rounded-lg text-sm font-medium cursor-pointer transition-all duration-150 ${
-            activeTab === 'pulmonary'
-              ? 'bg-navy border-navy text-white'
-              : 'bg-white border-border text-text-secondary hover:border-blue hover:text-blue hover:bg-blue-pale'
-          }`}
-        >
-          <AirVent size={15} />
-          Pulmonary involvement
-        </button>
+      <div className="flex flex-wrap gap-2 mb-6">
+        {TABS.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`flex items-center gap-2 px-[18px] py-2 border rounded-lg text-sm font-medium cursor-pointer transition-all duration-150 ${
+              activeTab === tab.id
+                ? 'bg-navy border-navy text-white'
+                : 'bg-white border-border text-text-secondary hover:border-blue hover:text-blue hover:bg-blue-pale'
+            }`}
+          >
+            {TAB_ICONS[tab.id]}
+            {tab.label}
+          </button>
+        ))}
       </div>
 
-      {activeTab === 'cardiac' ? <CardiacWorkup /> : <PulmonaryWorkup />}
+      <div className="bg-white border border-border rounded-xl p-7 shadow-sm">
+        <div className="flex items-center gap-3.5 mb-[18px]">
+          <div className="w-[42px] h-[42px] bg-blue-pale rounded-[10px] flex items-center justify-center text-blue shrink-0">
+            {TAB_ICONS[activeTab]}
+          </div>
+          <h2 className="font-heading text-lg font-semibold text-navy">
+            {(() => { const t = TABS.find(t => t.id === activeTab); return t?.cardTitle || t?.label; })()}
+          </h2>
+        </div>
+        <DiagnosticTable rows={currentTab.rows} />
+        <CollapsibleRefs refs={currentTab.references} />
+      </div>
     </div>
   );
 }
@@ -59,7 +311,7 @@ export default function WorkupPage() {
 const criteriaData = [
   {
     id: 'mln',
-    title: 'Myeloid / Lymphoid Neoplasms with TK Fusion Genes',
+    title: 'Myeloid / Lymphoid Neoplasms with TK Fusion Genes (M/LN-TK)',
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
         <path d="M8 2 C8 7, 16 9, 16 12 C16 15, 8 17, 8 22" strokeLinecap="round" />
@@ -83,7 +335,6 @@ const criteriaData = [
           <tbody>
             <tr><td className="px-2 py-1.5 text-text-secondary border-b border-border align-top">Disease-defining fusion gene</td><td className="px-2 py-1.5 text-text-secondary border-b border-border align-top">Rearrangements in <em>PDGFRA</em>, <em>PDGFRB</em>, <em>FGFR1</em>, <em>JAK2</em>, <em>ABL1</em>, <em>FLT3</em></td></tr>
             <tr><td className="px-2 py-1.5 text-text-secondary border-b border-border align-top">Other defined tyrosine kinase fusions</td><td className="px-2 py-1.5 text-text-secondary border-b border-border align-top"><em>ETV6::FGFR2</em>; <em>ETV6::LYN</em>; <em>ETV6::NTRK3</em>; <em>RANBP2::ALK</em>; <em>BCR::RET</em>; <em>FGFR1OP::RET</em></td></tr>
-            <tr><td className="px-2 py-1.5 text-text-secondary border-b border-border align-top">Eosinophilia</td><td className="px-2 py-1.5 text-text-secondary border-b border-border align-top">Recurrent eosinophilia is common and may be the presenting feature</td></tr>
           </tbody>
         </table>
         <div className="mt-5">
@@ -127,7 +378,7 @@ const criteriaData = [
   },
   {
     id: 'sm',
-    title: 'Systemic Mastocytosis',
+    title: 'Systemic Mastocytosis (SM)',
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
         <circle cx="11" cy="13" r="6" />
@@ -200,12 +451,12 @@ const criteriaData = [
           </thead>
           <tbody>
             {[
-              ['Maximum eosinophil count ≥ 1 × 10⁹/L', '+5', 'text-accent-green'],
+              ['Blood eosinophil count ≥ 1 × 10⁹/L', '+5', 'text-accent-green'],
               ['Obstructive airway disease', '+3', 'text-accent-green'],
               ['Nasal polyps', '+3', 'text-accent-green'],
               ['Extravascular eosinophilic predominant inflammation (biopsy)', '+2', 'text-accent-green'],
               ['Mononeuritis multiplex / motor neuropathy not due to radiculopathy', '+1', 'text-accent-green'],
-              ['Cytoplasmic ANCA or anti-PR3 ANCA positivity', '-3', 'text-accent-red'],
+              ['Cytoplasmic anti-neutrophil cytoplasmic antibodies (cANCA) or anti-proteinase 3 (anti-PR3) ANCA positivity', '-3', 'text-accent-red'],
               ['Hematuria', '-1', 'text-accent-red'],
             ].map((row, i) => (
               <tr key={i}>
@@ -216,15 +467,15 @@ const criteriaData = [
           </tbody>
         </table>
         <div className="mt-3 bg-[#fffbec] text-navy text-xs font-medium p-2.5 rounded-lg border-l-3 border-accent-orange">
-          ⚡ ACR/EULAR weighted score ≥ 6 classifies EGPA (research use). Alternative causes of eosinophilia and vasculitis must be excluded.
+          ⚡ These classification criteria should be applied to classify a patient as having eosinophilic granulomatosis with polyangiitis when a diagnosis of small- or medium-vessel vasculitis has been made. Alternate diagnoses mimicking vasculitis should be excluded prior to applying the criteria. A score of ≥ 6 is needed for classification of EGPA.
         </div>
-        <p className="text-[11px] text-text-muted italic mt-2.5">Adapted from the current ICC Classification (Arber DA et al. <em>Blood</em>. 2022;140(11):1200–1228)</p>
+        <p className="text-[11px] text-text-muted italic mt-2.5">Adapted from the ACR/EULAR Classification (Grayson PC et al. <em>Ann Rheum Dis</em>. 2022;81(3):309–314)</p>
       </div>
     ),
   },
   {
     id: 'ihes',
-    title: 'Idiopathic Hypereosinophilic Syndrome',
+    title: 'Idiopathic Hypereosinophilic Syndrome (iHES)',
     icon: (
       <svg width="22" height="22" viewBox="0 0 36 36" fill="none">
         <circle cx="12" cy="12" r="4" fill="currentColor" opacity=".9" />
@@ -247,9 +498,9 @@ const criteriaData = [
           <tbody>
             {[
               ['Persistent peripheral blood hypereosinophilia', 'Eosinophil count ≥ 1.5 × 10⁹/L and ≥ 10% eosinophils'],
-              ['Organ damage / dysfunction', 'Attributable to tissue eosinophilic infiltrate (cardiac, pulmonary, neurologic, gastrointestinal, or dermatologic)'],
+              ['Organ damage / dysfunction', 'Attributable to tissue eosinophilic infiltrate'],
               ['No underlying reactive condition', 'No evidence of a reactive, well-defined autoimmune disease or neoplastic condition/disorder underlying the hypereosinophilia'],
-              ['Exclusion of lymphocyte variant HES', 'Absence of clonal T-cell population producing eosinophilopoietic cytokines'],
+              ['Exclusion of lymphocyte variant HES (lHES)', 'An abnormal T-cell population must be detected immunophenotypically with or without T-cell receptor clonality by molecular analysis for diagnosis of lHES'],
               ['Normal bone marrow morphology', 'Bone marrow morphologically within normal limits except for increased eosinophils'],
               ['Exclusion of clonal causes', 'No molecular genetic clonal abnormality; clonal hematopoiesis of indeterminate potential (CHIP) does not exclude diagnosis'],
             ].map((row, i) => (
@@ -259,7 +510,7 @@ const criteriaData = [
               </tr>
             ))}
             <tr className="bg-[#fffbec]"><td colSpan={2} className="px-2 py-1.5 text-navy text-xs font-medium rounded-b-lg">
-              ⚡ iHES is a diagnosis of exclusion. Only after all reactive, autoimmune, and clonal etiologies (including <em>PDGFRA</em>, <em>PDGFRB</em>, <em>FGFR1</em>, <em>JAK2</em> rearrangements) have been ruled out may the diagnosis be applied.
+              ⚡ The diagnosis of iHES requires all 6 criteria.
             </td></tr>
           </tbody>
         </table>
@@ -300,7 +551,7 @@ function CriteriaAccordion() {
 
   return (
     <div className="criteria-area" ref={areaRef}>
-      <div className="grid grid-cols-4 gap-3.5 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 mb-6">
         {criteriaData.map((crit) => {
           const isOpen = openId === crit.id;
           return (
@@ -350,7 +601,7 @@ function CriteriaAccordion() {
   );
 }
 
-/* ── Genetic Workup ── */
+/* ── Genetic Workup (§4.2) ── */
 function GeneticWorkup() {
   const [openStep, setOpenStep] = useState<number | null>(null);
 
@@ -359,299 +610,110 @@ function GeneticWorkup() {
   };
 
   return (
-    <div className="flex flex-col gap-0">
-      {/* Step 1 */}
-      <FlowStep
-        number={1}
+    <div className="flex flex-col gap-4 mb-6">
+      <GeneticAccordion
         isOpen={openStep === 1}
         onToggle={() => toggleStep(1)}
         icon={<Dna size={18} />}
         title="Initial genetic diagnostics"
-        subtitle="Standard cytogenetic and molecular screening"
+        subtitle="Conventional cytogenetics, FISH, RT-PCR, and NGS"
       >
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3 my-3.5">
-          <MethodCard title="Conventional cytogenetics (karyotype)" />
-          <MethodCard title="Fluorescence in situ hybridization (FISH)" />
-          <MethodCard title="Reverse transcriptase PCR (RT-PCR)" />
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-3 my-3.5">
+          <MethodCard title="Conventional cytogenetics (karyotype)">
+            <ul className="list-disc pl-4 text-xs text-text-secondary space-y-0.5">
+              <li>Detectable chromosomal rearrangements involving tyrosine kinase-encoding genes</li>
+              <li>Also suitable for identifying both fusion partners</li>
+              <li>Important exceptions: <em>FIP1L1::PDGFRA</em> and <em>ETV6::ABL1</em> (cryptic rearrangements, not detectable by karyotype)</li>
+            </ul>
+          </MethodCard>
+          <MethodCard title="Fluorescence in situ hybridization (FISH)">
+            <ul className="list-disc pl-4 text-xs text-text-secondary space-y-0.5">
+              <li>The cytogenetically cryptic <em>FIP1L1::PDGFRA</em> rearrangement can be detected by FISH</li>
+              <li>Further assessment for rearrangements and aberrations involving <em>PDGFRA</em>, <em>PDGFRB</em>, <em>FGFR1</em>, and <em>JAK2</em></li>
+            </ul>
+          </MethodCard>
+          <MethodCard title="Reverse transcriptase PCR (RT-PCR)">
+            <ul className="list-disc pl-4 text-xs text-text-secondary space-y-0.5">
+              <li>Assessment of most common rearrangements including <em>FIP1L1::PDGFRA</em>, <em>ETV6::PDGFRB</em>, <em>ZMYM2::FGFR1</em>, <em>PCM1::JAK2</em>, and <em>ETV6::ABL1</em></li>
+              <li>In cases with a known rearrangement, PCR-based analyses can also be used to monitor treatment response</li>
+            </ul>
+          </MethodCard>
+          <MethodCard title="Myeloid gene panel (NGS)">
+            <ul className="list-disc pl-4 text-xs text-text-secondary space-y-0.5">
+              <li>Assessment of point mutations including <em>JAK2 V617F</em>, <em>KIT D816V</em>, and <em>STAT5B</em></li>
+            </ul>
+          </MethodCard>
         </div>
-      </FlowStep>
+      </GeneticAccordion>
 
-      {/* Step 2 */}
-      <FlowStep
-        number={2}
+      <GeneticAccordion
         isOpen={openStep === 2}
         onToggle={() => toggleStep(2)}
-        icon={
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M8 2 C8 7, 16 9, 16 12 C16 15, 8 17, 8 22" strokeLinecap="round" />
-            <path d="M16 2 C16 7, 8 9, 8 12 C8 15, 16 17, 16 22" strokeLinecap="round" />
-            <line x1="9.5" y1="9.5" x2="14.5" y2="9.5" strokeLinecap="round" />
-            <line x1="9.5" y1="14.5" x2="14.5" y2="14.5" strokeLinecap="round" />
-          </svg>
-        }
-        title="Next generation sequencing (NGS)"
-        subtitle="Targeted myeloid panel sequencing"
-      >
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3 my-3.5">
-          <MethodCard title="Myeloid gene panel (NGS)" />
-          <MethodCard title="Variant interpretation" />
-        </div>
-      </FlowStep>
-
-      {/* Step 3 */}
-      <FlowStep
-        number={3}
-        isOpen={openStep === 3}
-        onToggle={() => toggleStep(3)}
-        isLast={true}
-        icon={
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <ellipse cx="12" cy="5" rx="9" ry="3" />
-            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
-            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
-          </svg>
-        }
+        icon={<Database size={18} />}
         title="Advanced sequencing"
         subtitle="Whole transcriptome and genome sequencing"
       >
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3 my-3.5">
-          <MethodCard title="Whole transcriptome sequencing (WTS)" />
-          <MethodCard title="Whole genome sequencing (WGS)" />
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-3 my-3.5">
+          <MethodCard title="Whole transcriptome sequencing (WTS) / Whole genome sequencing (WGS)">
+            <ul className="list-disc pl-4 text-xs text-text-secondary space-y-0.5">
+              <li>Detection of rare mutations, e.g., in <em>RUNX1</em>, associated with <em>FGFR1</em> rearrangements</li>
+              <li>Assessment of mutations e.g., <em>ASXL1</em>, <em>BCOR</em>, <em>TET2</em>, <em>DNMT3A</em>, <em>TP53</em>, <em>ZRSR2</em></li>
+            </ul>
+          </MethodCard>
         </div>
-      </FlowStep>
+      </GeneticAccordion>
     </div>
   );
 }
 
-function FlowStep({
-  number,
+function GeneticAccordion({
   isOpen,
   onToggle,
-  isLast,
   icon,
   title,
   subtitle,
   children,
 }: {
-  number: number;
   isOpen: boolean;
   onToggle: () => void;
-  isLast?: boolean;
   icon: React.ReactNode;
   title: string;
   subtitle: string;
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex gap-[18px] items-start" id={`gw-step-${number}`}>
-      <div className="flex flex-col items-center shrink-0 w-8 self-stretch relative">
-        <div className="w-8 h-8 bg-blue text-white rounded-full flex items-center justify-center font-heading text-sm font-bold shrink-0 relative z-10">
-          {number}
+    <div className="bg-white border border-border rounded-xl shadow-sm cursor-pointer select-none overflow-hidden transition-[box-shadow,border-color] duration-150 hover:shadow-md hover:border-blue">
+      <div
+        onClick={onToggle}
+        className={`flex items-center gap-3.5 ${isOpen ? 'p-5' : 'p-3.5'}`}
+      >
+        <div className={`${isOpen ? 'w-9 h-9' : 'w-8 h-8'} bg-blue-pale rounded-lg flex items-center justify-center text-blue shrink-0`}>
+          {icon}
         </div>
-        {!isLast && (
-          <div className="absolute top-10 bottom-2 left-1/2 -translate-x-1/2 w-[2px] bg-border" />
-        )}
-      </div>
-      <div className="flex-1 mb-5">
-        <div
-          className="bg-white border border-border rounded-xl shadow-sm cursor-pointer select-none overflow-hidden transition-[box-shadow,border-color] duration-150 hover:shadow-md hover:border-blue"
-        >
-          <div
-            onClick={onToggle}
-            className={`flex items-center gap-3.5 ${isOpen ? 'p-5' : 'p-3.5'}`}
-          >
-            <div className={`${isOpen ? 'w-9 h-9' : 'w-8 h-8'} bg-blue-pale rounded-lg flex items-center justify-center text-blue shrink-0`}>
-              {icon}
-            </div>
-            <div className="flex-1 min-w-0">
-              <h3 className={`font-heading font-semibold text-navy ${isOpen ? 'text-[15px]' : 'text-sm'}`}>{title}</h3>
-              {isOpen && <p className="text-[13px] text-text-muted mt-0.5">{subtitle}</p>}
-            </div>
-            <ChevronDown
-              size={16}
-              strokeWidth={2.5}
-              className={`text-text-muted shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
-            />
-          </div>
-          {isOpen && (
-            <div className="px-5 pb-5 animate-fade-in">
-              {children}
-            </div>
-          )}
+        <div className="flex-1 min-w-0">
+          <h3 className={`font-heading font-semibold text-navy ${isOpen ? 'text-[15px]' : 'text-sm'}`}>{title}</h3>
+          {isOpen && <p className="text-[13px] text-text-muted mt-0.5">{subtitle}</p>}
         </div>
+        <ChevronDown
+          size={16}
+          strokeWidth={2.5}
+          className={`text-text-muted shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+        />
       </div>
+      {isOpen && (
+        <div className="px-5 pb-5 animate-fade-in">
+          {children}
+        </div>
+      )}
     </div>
   );
 }
 
-function MethodCard({ title }: { title: string }) {
+function MethodCard({ title, children }: { title: string; children?: React.ReactNode }) {
   return (
     <div className="bg-bg border border-border rounded-lg p-3">
       <div className="text-xs font-bold text-navy mb-1.5">{title}</div>
-      <p className="text-xs text-text-muted italic leading-relaxed m-0">
-        [ Placeholder – indication, specimen, and interpretation details to be added ]
-      </p>
-    </div>
-  );
-}
-
-/* ── Cardiac Workup ── */
-function CardiacWorkup() {
-  const [trop, setTrop] = useState('');
-  const [bnp, setBnp] = useState('');
-  const [lge, setLge] = useState('');
-  const [showResult, setShowResult] = useState(false);
-
-  const tropVal = parseFloat(trop) || 0;
-  const bnpVal = parseFloat(bnp) || 0;
-
-  let score = 0;
-  const details: string[] = [];
-
-  const canCompute = trop !== '' && bnp !== '' && lge !== '';
-
-  if (canCompute) {
-    if (tropVal >= 0.045) { score += 1; details.push('hs-Troponin I ≥ 0.045 µg/L: +1'); }
-    if (bnpVal >= 125) { score += 1; details.push('NT-proBNP ≥ 125 ng/L: +1'); }
-    if (lge === 'yes') { score += 3; details.push('LGE positive: +3'); }
-  }
-
-  const riskLabel = score === 0 ? 'Low cardiac risk' : score <= 3 ? 'Intermediate cardiac risk' : 'High cardiac risk';
-
-  const handleInput = () => {
-    if (canCompute && !showResult) setShowResult(true);
-  };
-
-  return (
-    <div className="flex flex-col gap-0">
-      {/* Step 1: Input */}
-      <div>
-        <div className="bg-white border border-border rounded-xl p-5 shadow-sm">
-          <div className="flex items-center gap-3.5 mb-3.5">
-            <div className="w-9 h-9 bg-blue-pale rounded-lg flex items-center justify-center text-blue">
-              <Heart size={18} />
-            </div>
-            <div>
-              <h3 className="font-heading text-[15px] font-semibold text-navy">Cardiac parameters</h3>
-              <p className="text-[13px] text-text-muted mt-0.5">Enter cardiac biomarkers and imaging findings.</p>
-            </div>
-          </div>
-          <div className="grid grid-cols-3 gap-3.5 items-end">
-            <div>
-              <label className="flex items-center gap-1.5 text-xs font-semibold text-text-primary mb-1.5">hs-Troponin I (µg/L)</label>
-              <div className="flex items-center border border-border rounded-lg overflow-hidden focus-within:border-blue transition-[border-color] duration-150">
-                <input
-                  type="number"
-                  value={trop}
-                  onChange={(e) => { setTrop(e.target.value); handleInput(); }}
-                  placeholder="e.g. 0.040"
-                  min="0"
-                  step="0.001"
-                  className="flex-1 px-3 py-2 border-none outline-none font-[DM_Sans,sans-serif] text-sm text-text-primary bg-transparent"
-                />
-                <div className="px-3 py-2 text-[13px] text-text-muted bg-bg border-l border-border whitespace-nowrap">µg/L</div>
-              </div>
-            </div>
-            <div>
-              <label className="flex items-center gap-1.5 text-xs font-semibold text-text-primary mb-1.5">NT-proBNP (ng/L)</label>
-              <div className="flex items-center border border-border rounded-lg overflow-hidden focus-within:border-blue transition-[border-color] duration-150">
-                <input
-                  type="number"
-                  value={bnp}
-                  onChange={(e) => { setBnp(e.target.value); handleInput(); }}
-                  placeholder="e.g. 120"
-                  min="0"
-                  step="1"
-                  className="flex-1 px-3 py-2 border-none outline-none font-[DM_Sans,sans-serif] text-sm text-text-primary bg-transparent"
-                />
-                <div className="px-3 py-2 text-[13px] text-text-muted bg-bg border-l border-border whitespace-nowrap">ng/L</div>
-              </div>
-            </div>
-            <div>
-              <label className="flex items-center gap-1.5 text-xs font-semibold text-text-primary mb-1.5">LGE in MRI</label>
-              <div className="relative">
-                <select
-                  value={lge}
-                  onChange={(e) => { setLge(e.target.value); if (!showResult) setShowResult(true); }}
-                  className="w-full px-3 py-2 pr-9 border border-border rounded-lg bg-white font-[DM_Sans,sans-serif] text-sm text-text-primary appearance-none cursor-pointer outline-none focus:border-blue transition-[border-color] duration-150"
-                >
-                  <option value="">— Select —</option>
-                  <option value="yes">Positive</option>
-                  <option value="no">Negative / not done</option>
-                </select>
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 w-0 h-0 border-l-4 border-r-4 border-t-[5px] border-l-transparent border-r-transparent border-t-text-muted pointer-events-none" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Step 2: Result */}
-      <div className={`mt-5 ${!canCompute ? 'opacity-40 pointer-events-none' : ''}`}>
-        <div className="bg-white border border-border rounded-xl p-5 shadow-sm">
-          <div className="flex items-center gap-3.5 mb-3.5">
-            <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${showResult && canCompute ? 'bg-blue-pale text-blue' : 'bg-bg text-text-muted'}`}>
-              <Lock size={18} />
-            </div>
-            <div>
-              <h3 className="font-heading text-[15px] font-semibold text-navy">Cardiac risk assessment</h3>
-              <p className="text-[13px] text-text-muted mt-0.5">
-                {showResult && canCompute ? 'Cardiac risk assessment complete.' : 'Complete the parameters to see the result.'}
-              </p>
-            </div>
-          </div>
-
-          {showResult && canCompute && (
-            <div>
-              <div className="inline-flex items-center gap-2 px-[18px] py-2.5 rounded-lg font-bold text-base mb-3.5 bg-bg text-navy border border-border">
-                {riskLabel} (Score: {score})
-              </div>
-              <div className="text-[13px] text-text-secondary mb-3.5">
-                <strong>Score components:</strong> {details.length ? details.join(' · ') : 'No points scored'} &nbsp;|&nbsp;{' '}
-                <strong>Total: {score} point{score !== 1 ? 's' : ''}</strong>
-              </div>
-              <p className="mt-2.5 text-[11px] text-text-muted italic">
-                ⚠ This cardiac risk score has not yet been formally validated and should be interpreted with caution. It is intended as a preliminary clinical support tool only.
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ── Pulmonary Workup (placeholder) ── */
-function PulmonaryWorkup() {
-  return (
-    <div className="flex flex-col gap-0">
-      <div>
-        <div className="bg-white border border-border rounded-xl p-5 shadow-sm">
-          <div className="flex items-center gap-3.5 mb-3.5">
-            <div className="w-9 h-9 bg-blue-pale rounded-lg flex items-center justify-center text-blue">
-              <AirVent size={18} />
-            </div>
-            <div>
-              <h3 className="font-heading text-[15px] font-semibold text-navy">Pulmonary parameters</h3>
-              <p className="text-[13px] text-text-muted mt-0.5">This section is a placeholder and will be completed in a subsequent version.</p>
-            </div>
-          </div>
-          <div className="bg-white border border-dashed border-border rounded-xl p-5 text-center text-text-muted text-[13px]">
-            <strong className="block text-sm font-semibold text-text-secondary mb-1">Work in progress</strong>
-            Specific pulmonary parameters (e.g. spirometry, DLCO, CT findings) will be added here.
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-5 opacity-40 pointer-events-none">
-        <div className="bg-white border border-dashed border-border rounded-xl p-5 flex items-center justify-between">
-          <div>
-            <h3 className="font-heading text-[15px] font-semibold text-text-secondary">Pulmonary risk assessment</h3>
-            <p className="text-[13px] text-text-muted mt-0.5">The result will appear here once the section is fully implemented.</p>
-          </div>
-          <Lock size={18} className="text-text-muted shrink-0" />
-        </div>
-      </div>
+      {children}
     </div>
   );
 }

@@ -1,35 +1,75 @@
+import { Link, useLocation } from 'wouter';
 import { Info } from 'lucide-react';
+
+const navItems = [
+  { path: '/score', label: 'Score' },
+  { path: '/methods', label: 'Methods' },
+  { path: '/workup', label: 'Diagnostic workup' },
+  { path: '/contact', label: 'Contact' },
+];
 
 interface HeaderProps {
   onAbout: () => void;
 }
 
 export default function Header({ onAbout }: HeaderProps) {
-  return (
-    <header className="bg-white border-b border-border px-8 h-[60px] flex items-center justify-between sticky top-0 z-100 shadow-sm">
-      <div className="flex items-center gap-3">
-        {/* Logo */}
-        <svg className="w-9 h-9" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="18" cy="18" r="18" fill="#e8eef9" />
-          <circle cx="12" cy="12" r="4" fill="#3b5fc0" opacity=".9" />
-          <circle cx="24" cy="12" r="3" fill="#3b5fc0" opacity=".5" />
-          <circle cx="18" cy="22" r="5" fill="#3b5fc0" opacity=".7" />
-          <circle cx="10" cy="22" r="2.5" fill="#3b5fc0" opacity=".4" />
-          <circle cx="26" cy="22" r="2.5" fill="#3b5fc0" opacity=".4" />
-        </svg>
-        <span className="font-heading font-semibold text-[17px] text-navy tracking-tight">
-          Eosinophilia Differentiation Score
-        </span>
-      </div>
-      <div className="flex items-center gap-2.5">
-        <button
-          onClick={onAbout}
-          className="flex items-center gap-1.5 px-3.5 py-1.5 border-none bg-transparent text-text-secondary text-sm font-medium cursor-pointer rounded-lg hover:bg-blue-pale hover:text-blue transition-[background,color] duration-150"
-        >
-          <Info size={15} />
-          About
-        </button>
+  const [location] = useLocation();
 
+  return (
+    <header className="bg-white border-b border-border sticky top-0 z-100 shadow-sm">
+      <div className="px-3 sm:px-6 lg:px-8 flex flex-col lg:flex-row lg:items-center lg:justify-between lg:h-[60px]">
+        {/* Top row: Logo + Title + About */}
+        <div className="flex items-center justify-between py-2 lg:py-0 gap-2 sm:gap-4 lg:gap-6">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <img src="/logo.svg" alt="Logo" className="w-7 h-7 sm:w-9 sm:h-9 shrink-0" />
+            <span className="font-heading font-semibold text-[14px] sm:text-[17px] text-navy tracking-tight whitespace-nowrap">
+              Eosinophilia Differentiation Score
+            </span>
+          </div>
+          <div className="lg:hidden">
+            <button
+              onClick={onAbout}
+              className="flex items-center gap-1 px-2 py-1.5 border-none bg-transparent text-text-secondary text-[13px] font-medium cursor-pointer rounded-lg hover:bg-blue-pale hover:text-blue transition-[background,color] duration-150"
+            >
+              <Info size={14} />
+              About
+            </button>
+          </div>
+        </div>
+
+        {/* Nav links */}
+        <nav className="flex items-center gap-0.5 sm:gap-1 pb-2 lg:pb-0">
+          {navItems.map(({ path, label }) => {
+            const isActive = location === path || (path === '/score' && location === '/');
+            return (
+              <Link
+                key={path}
+                href={path}
+                className={`
+                  px-1.5 sm:px-2.5 lg:px-3 py-1.5 rounded-lg text-[13px] sm:text-sm font-medium cursor-pointer no-underline
+                  transition-[background,color] duration-150
+                  ${isActive
+                    ? 'bg-blue-pale text-blue font-semibold'
+                    : 'text-text-secondary hover:bg-blue-pale hover:text-blue'
+                  }
+                `}
+              >
+                {label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Desktop About button */}
+        <div className="hidden lg:flex items-center gap-2.5">
+          <button
+            onClick={onAbout}
+            className="flex items-center gap-1.5 px-3.5 py-1.5 border-none bg-transparent text-text-secondary text-sm font-medium cursor-pointer rounded-lg hover:bg-blue-pale hover:text-blue transition-[background,color] duration-150"
+          >
+            <Info size={15} />
+            About
+          </button>
+        </div>
       </div>
     </header>
   );

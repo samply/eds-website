@@ -1,10 +1,10 @@
 import type { Contribution } from '../types';
-import { Droplets, FlaskConical, Dna, Pill, Heart, Shield, Wind } from 'lucide-react';
+import { Atom, TestTube, Zap, Pill, Heart, Shield, Wind } from 'lucide-react';
 
 const iconMap: Record<string, React.ReactNode> = {
-  'Tryptase': <Droplets size={20} />,
-  'Immunoglobulin E': <FlaskConical size={20} />,
-  'LDH': <Dna size={20} />,
+  'Serum tryptase': <Atom size={20} />,
+  'Immunoglobulin E': <TestTube size={20} />,
+  'LDH': <Zap size={20} />,
   'Vitamin B12': <Pill size={20} />,
   'Involved organs': <Heart size={20} />,
   'Splenomegaly': <Shield size={20} />,

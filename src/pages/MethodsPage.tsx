@@ -1,4 +1,4 @@
-import { Info, Activity, BookOpen, AlertTriangle } from 'lucide-react';
+import { Info, Activity, BookOpen, AlertTriangle, BarChart3, BadgeCheck } from 'lucide-react';
 import { cn } from '../utils/cn';
 
 export default function MethodsPage() {
@@ -11,55 +11,92 @@ export default function MethodsPage() {
       {/* About section */}
       <Section icon={Info} title="About the Eosinophilia Differentiation Score (EDS)">
         <p className="text-sm text-text-secondary leading-relaxed mb-3.5">
-          The diagnostic evaluation of persistent eosinophilia with organ involvement remains challenging, as clonal and
-          non-clonal etiologies frequently exhibit overlapping clinical phenotypes despite substantial differences in
-          underlying pathophysiology, therapeutic implications, and prognosis. An early and accurate distinction between
-          these entities is crucial to appropriately guide genetic testing and to enable timely initiation of targeted
-          therapy, particularly with the aim of preventing irreversible eosinophil-mediated end-organ damage.
+          The Eosinophilia Differentiation Score (EDS) displays the probability of clonal vs. non-clonal eosinophilia derived from the published training cohort.
         </p>
-        <p className="text-sm text-text-secondary leading-relaxed">
-          The Eosinophilia Differentiation Score (EDS) represents a robust tool for discriminating between clonal and
-          non-clonal eosinophilia and may support individualized decision-making with respect to genetic work-up and
-          therapeutic management. Methodologically, the EDS integrates the continuous variables serum tryptase,
-          immunoglobulin E, lactate dehydrogenase, vitamin B12 levels, and the number of involved organs, as well as
-          the categorical variables splenomegaly and ear-nose-throat (ENT) involvement/asthma.
-        </p>
+        <InfoBox>
+          For a full description of the cohorts and statistical approach, please refer to the original publication:{' '}
+          <a href="#" className="text-blue font-semibold no-underline hover:underline">
+            Link to publication ↗
+          </a>
+        </InfoBox>
       </Section>
 
       {/* Statistical Background */}
       <Section icon={Activity} title="Statistical Background and Validation">
         <p className="text-sm text-text-secondary leading-relaxed mb-3.5">
-          For development of EDS, a random forest-based machine-learning approach informed a two-step logistic
-          regression model that identified 7 variables as the most informative predictors for distinguishing clonal
-          from non-clonal eosinophilic disorders in patients with eosinophils ≥0.5 × 10⁹/L. These comprised the
-          continuous variables higher serum tryptase, higher vitamin B12, lower immunoglobulin E (IgE), lower lactate
-          dehydrogenase (LDH), and fewer involved organ sites, together with the categorical variables presence of
-          splenomegaly and absence of asthma and/or ENT involvement.
+          To develop the EDS, a random forest machine-learning algorithm was used to identify the most relevant
+          predictors, which were subsequently incorporated into a two-step logistic regression model. Seven variables
+          emerged as the strongest discriminators between clonal and non-clonal eosinophilic disorders among patients
+          with eosinophils ≥ 0.5 × 10⁹/L. A clonal phenotype was indicated by the continuous predictors elevated
+          serum tryptase, elevated vitamin B12, lower immunoglobulin E, lower lactate dehydrogenase, lower number
+          of involved organ sites, as well as the categorical predictors presence of splenomegaly and absence of
+          asthma and/or ENT involvement.
         </p>
         <p className="text-sm text-text-secondary leading-relaxed mb-3.5">
-          The linear predictor η of the EDS was calculated as a weighted linear combination of these variables, whereby
-          each patient-specific variable x<sub>j</sub> for a given patient was weighted by a coefficient w<sub>j</sub>.
-          The resulting linear predictor was then converted into a probability using logistic transformation.
+          The EDS linear predictor η was derived by computing a weighted sum of all patient-specific variable values
+          x<sub>j</sub>, each multiplied by its corresponding model coefficient weight w<sub>j</sub>. The linear
+          predictor was subsequently transformed into a probability estimate via logistic transformation. Optimal
+          probability cutoff was determined using Youden's index.
         </p>
 
-        {/* Stats grid */}
-        <div className="grid grid-cols-3 gap-3.5 my-5">
-          <div className="bg-bg border border-border rounded-lg p-4 text-center">
-            <div className="font-heading text-2xl font-bold text-navy">96.7%</div>
-            <div className="text-xs text-text-muted mt-0.5">Sensitivity (optimal cutoff)</div>
+        {/* Cutoff box */}
+        <div className="bg-blue-pale border-2 border-blue rounded-xl p-6 my-5 text-center">
+          <div className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-2">Cutoff</div>
+          <div className="font-heading text-[42px] font-bold text-navy leading-none">73%</div>
+          <div className="text-sm text-text-secondary mt-3 space-y-2">
+            <div>
+              <span className="font-semibold text-navy">Score ≥ 73%</span>
+              {' — '}clonal disorders
+            </div>
+            <div>
+              <span className="font-semibold text-navy">Score &lt; 73%</span>
+              {' — '}non-clonal disorders
+            </div>
           </div>
-          <div className="bg-bg border border-border rounded-lg p-4 text-center">
-            <div className="font-heading text-2xl font-bold text-navy">96.5%</div>
-            <div className="text-xs text-text-muted mt-0.5">Specificity (optimal cutoff)</div>
+        </div>
+
+        {/* Metrics boxes side by side */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 my-5">
+          <div className="bg-bg border border-border rounded-lg p-3.5">
+            <div className="flex items-center gap-1.5 text-[11px] font-bold text-navy uppercase tracking-wider mb-2.5">
+              <BarChart3 size={13} strokeWidth={2} />
+              Training metrics
+            </div>
+            <div className="flex justify-between items-center mb-1.5">
+              <span className="text-[13px] text-text-secondary">Sensitivity</span>
+              <span className="font-heading text-base font-bold text-navy">96.7%</span>
+            </div>
+            <div className="flex justify-between items-center mb-1.5">
+              <span className="text-[13px] text-text-secondary">Specificity</span>
+              <span className="font-heading text-base font-bold text-navy">96.5%</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-[13px] text-text-secondary">Area under the curve</span>
+              <span className="font-heading text-base font-bold text-navy">0.993</span>
+            </div>
           </div>
-          <div className="bg-bg border border-border rounded-lg p-4 text-center">
-            <div className="font-heading text-2xl font-bold text-navy">0.993</div>
-            <div className="text-xs text-text-muted mt-0.5">Area under the curve (AUC)</div>
+          <div className="bg-bg border border-border rounded-lg p-3.5">
+            <div className="flex items-center gap-1.5 text-[11px] font-bold text-navy uppercase tracking-wider mb-2.5">
+              <BadgeCheck size={13} strokeWidth={2} />
+              Validation metrics
+            </div>
+            <div className="flex justify-between items-center mb-1.5">
+              <span className="text-[13px] text-text-secondary">Sensitivity</span>
+              <span className="font-heading text-base font-bold text-navy">### %</span>
+            </div>
+            <div className="flex justify-between items-center mb-1.5">
+              <span className="text-[13px] text-text-secondary">Specificity</span>
+              <span className="font-heading text-base font-bold text-navy">### %</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-[13px] text-text-secondary">Area under the curve</span>
+              <span className="font-heading text-base font-bold text-navy">###</span>
+            </div>
           </div>
         </div>
 
         {/* Cohort cards */}
-        <div className="grid grid-cols-2 gap-3.5 my-[18px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 my-[18px]">
           <div className="bg-bg border-2 border-dashed border-border rounded-lg p-3.5">
             <div className="flex items-center gap-1.5 text-xs font-bold text-navy uppercase tracking-wider mb-2">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -85,32 +122,19 @@ export default function MethodsPage() {
         </div>
 
         <p className="text-sm text-text-secondary leading-relaxed mb-3.5">
-          The optimal cutoff, determined using Youden's index, was 0.730, yielding a sensitivity of 96.7% and
-          specificity of 96.5% with an AUC of 0.993. The corrected partial AUC (pAUC) was 0.965 in the
-          high-specificity range (100–90%) and 0.962 in the high-sensitivity range (100–90%), highlighting robustness
-          across clinically relevant thresholds.
+          Sensitivity analyses across patient subgroups with progressively higher eosinophil count thresholds
+          (1.0–5.0 × 10⁹/L) confirmed strong and consistent discriminatory performance of the model regardless of
+          the threshold applied.
         </p>
-        <p className="text-sm text-text-secondary leading-relaxed mb-3.5">
-          Additional sensitivity analyses were performed in patient subgroups defined by progressively higher
-          eosinophil thresholds (1.0–5.0 × 10⁹/L). Across all thresholds tested, the model maintained high
-          discriminatory performance.
-        </p>
-
-        <InfoBox>
-          Full details on methods, analyses, and validation are available in our publication.{' '}
-          <a href="#" className="text-blue font-semibold no-underline hover:underline">
-            Link to publication (placeholder) ↗
-          </a>
-        </InfoBox>
       </Section>
 
       {/* Limitations */}
-      <Section icon={AlertTriangle} title="Limitations" iconClass="bg-[#fff4ec] border border-[#fcd8b4] [&_svg]:text-accent-orange">
+      <Section icon={AlertTriangle} title="Limitations" className="!mb-0" iconClass="bg-[#fff4ec] border border-[#fcd8b4] [&_svg]:text-accent-orange">
         <ol className="list-decimal pl-5 flex flex-col gap-2.5 mt-1">
           {[
-            'Although externally validated across different registries and clinical trials, the EDS was derived from referral-center cohorts enriched for diagnostically challenging and clinically significant eosinophilic disorders; performance in unselected community-based populations remains to be established despite the inclusion.',
-            'Some diagnostic subgroups were relatively small, limiting subgroup-specific inference.',
-            'The EDS is intended as a clinical support tool. Rare entities, atypical phenotypes (including hereditary alpha-tryptasemia), and treatment-modified presentations may still lead to misclassification.',
+            'Misclassification may still occur in disorders not included in this analysis, as well as in cases with atypical presentations and/or treatment-modified phenotypes.',
+            'Despite external validation across multiple registries and clinical trials, the EDS was developed in referral-center cohorts enriched for diagnostically complex eosinophilia-associated disorders; diagnostic performance in unselected community-based populations remains to be established.',
+            'Some diagnostic subgroups were relatively small, restricting subgroup-specific inference.',
           ].map((text, i) => (
             <li key={i} className="text-sm text-text-secondary leading-relaxed pl-1">{text}</li>
           ))}
@@ -126,15 +150,17 @@ function Section({
   icon: Icon,
   title,
   children,
+  className,
   iconClass,
 }: {
   icon: React.ComponentType<{ size?: number }>;
   title: string;
   children: React.ReactNode;
+  className?: string;
   iconClass?: string;
 }) {
   return (
-    <div className="bg-white border border-border rounded-xl p-7 mb-6 shadow-sm">
+    <div className={cn('bg-white border border-border rounded-xl p-7 mb-6 shadow-sm', className)}>
       <div className="flex items-center gap-3.5 mb-[18px]">
         <div className={cn('w-[42px] h-[42px] bg-blue-pale rounded-[10px] flex items-center justify-center text-blue shrink-0', iconClass)}>
           <Icon size={20} />

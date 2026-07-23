@@ -1,8 +1,9 @@
 import type { FormValues, Contribution, ResultData, CardiacResult, CardiacScore, CardiacRisk } from '../types';
 
 /**
- * Compute the EDS probability using a placeholder logistic regression formula.
- * NOTE: Replace this function with the real EDS formula when available.
+ * Real EDS coefficients from the published logistic regression model (Table 1).
+ * Linear predictor: η = (Σ wⱼ × xⱼ) − w₀
+ * Probability: P(EDS) = 1 / (1 + e^(−η))
  */
 export function computeScore(values: FormValues): number {
   const tryptase = parseFloat(values.tryptase) || 0;
@@ -13,21 +14,32 @@ export function computeScore(values: FormValues): number {
   const splen = values.splen === 'yes' ? 1 : 0;
   const ent = values.ent === 'yes' ? 1 : 0;
 
-  // Placeholder logistic regression (coefficients are illustrative)
-  let eta = -3.5;
-  eta += 0.07 * Math.min(tryptase, 100);
-  eta -= 0.002 * Math.min(ige, 3000);
-  eta += 0.004 * Math.min(ldh, 1000);
-  eta += 0.002 * Math.min(b12, 2000);
-  eta += 0.30 * organs;
-  eta += 1.2 * splen;
-  eta -= 0.8 * ent;
+  // Coefficients from Table 1
+  const w_tryptase = 0.125516906;
+  const w_b12      = 0.003489235;
+  const w_ldh      = -0.002178421;
+  const w_ige      = -0.002612035;
+  const w_organs   = -0.860808755;
+  const w_splen    = 2.855350231;
+  const w_ent      = -1.388400077;
+  const w0         = -1.34034;
+
+  const eta = w_tryptase * tryptase
+          + w_b12      * b12
+          + w_ldh      * ldh
+          + w_ige      * ige
+          + w_organs   * organs
+          + w_splen    * splen
+          + w_ent      * ent
+          - w0;
 
   return 1 / (1 + Math.exp(-eta));
 }
 
 /**
- * Compute individual variable contributions (illustrative weights).
+ * Compute individual variable contributions.
+ * contribution_j = (wⱼ × xⱼ) / Σ|wⱼ × xⱼ| × 100
+ * Positive → clonal direction, negative → non-clonal direction.
  */
 export function computeContributions(values: FormValues): Contribution[] {
   const tryptase = parseFloat(values.tryptase) || 0;
@@ -38,15 +50,23 @@ export function computeContributions(values: FormValues): Contribution[] {
   const splen = values.splen;
   const ent = values.ent;
 
-  return [
-    { name: 'Tryptase', pct: Math.round(0.07 * Math.min(tryptase, 100) * 10) },
-    { name: 'Immunoglobulin E', pct: -Math.round(0.002 * Math.min(ige, 3000) * 10) },
-    { name: 'LDH', pct: Math.round(0.004 * Math.min(ldh, 1000) * 10) },
-    { name: 'Vitamin B12', pct: Math.round(0.002 * Math.min(b12, 2000) * 10) },
-    { name: 'Involved organs', pct: Math.round(0.30 * organs * 10) },
-    { name: 'Splenomegaly', pct: splen === 'yes' ? 12 : 0 },
-    { name: 'ENT / Asthma', pct: ent === 'yes' ? -8 : 0 },
+  const raw = [
+    { name: 'Serum tryptase',           val:  0.125516906 * tryptase },
+    { name: 'Immunoglobulin E',   val: -0.002612035 * ige },
+    { name: 'LDH',                val: -0.002178421 * ldh },
+    { name: 'Vitamin B12',        val:  0.003489235 * b12 },
+    { name: 'Involved organs',    val: -0.860808755 * organs },
+    { name: 'Splenomegaly',       val:  splen === 'yes' ? 2.855350231 : 0 },
+    { name: 'ENT / Asthma',       val:  ent === 'yes' ? -1.388400077 : 0 },
   ];
+
+  const total = raw.reduce((sum, r) => sum + Math.abs(r.val), 0);
+  if (total === 0) return raw.map(r => ({ name: r.name, pct: 0 }));
+
+  return raw.map(r => ({
+    name: r.name,
+    pct: Math.round((r.val / total) * 100),
+  }));
 }
 
 /**

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Link } from 'wouter';
-import { ExternalLink, RotateCcw } from 'lucide-react';
+import { ArrowRight, RotateCcw } from 'lucide-react';
 import { DEFAULT_FORM_VALUES } from '../types';
 import type { FormValues } from '../types';
 import { calculateResult } from '../utils/scoring';
@@ -39,7 +39,7 @@ export default function ScorePage({ values, onValuesChange: setValues }: ScorePa
   }, [values]);
 
   return (
-    <div className="grid grid-cols-[340px_1fr] gap-7 items-start animate-fade-in">
+    <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-7 items-start animate-fade-in">
       {/* Input Panel */}
       <div className="bg-white border border-border rounded-xl p-7 shadow-sm">
         <div className="flex items-center justify-between mb-1.5">
@@ -57,7 +57,7 @@ export default function ScorePage({ values, onValuesChange: setValues }: ScorePa
         {/* Tryptase */}
         <div className="mb-[18px]">
           <label className="flex items-center gap-1.5 text-[13px] font-semibold text-text-primary mb-1.5">
-            Tryptase (µg/L)
+            Serum tryptase (ng/mL)
           </label>
           <div className="flex items-center border border-border rounded-lg bg-white overflow-hidden focus-within:border-blue transition-[border-color] duration-150">
             <input
@@ -69,7 +69,7 @@ export default function ScorePage({ values, onValuesChange: setValues }: ScorePa
               step="0.1"
               className="flex-1 px-3 py-2 border-none outline-none font-[DM_Sans,sans-serif] text-sm text-text-primary bg-transparent"
             />
-            <div className="px-3 py-2 text-[13px] text-text-muted bg-bg border-l border-border whitespace-nowrap">µg/L</div>
+            <div className="px-3 py-2 text-[13px] text-text-muted bg-bg border-l border-border whitespace-nowrap">ng/mL</div>
           </div>
         </div>
 
@@ -114,7 +114,7 @@ export default function ScorePage({ values, onValuesChange: setValues }: ScorePa
         {/* Vitamin B12 */}
         <div className="mb-[18px]">
           <label className="flex items-center gap-1.5 text-[13px] font-semibold text-text-primary mb-1.5">
-            Vitamin B12 (pmol/L)
+            Vitamin B12 (pg/mL)
           </label>
           <div className="flex items-center border border-border rounded-lg bg-white overflow-hidden focus-within:border-blue transition-[border-color] duration-150">
             <input
@@ -126,7 +126,7 @@ export default function ScorePage({ values, onValuesChange: setValues }: ScorePa
               step="1"
               className="flex-1 px-3 py-2 border-none outline-none font-[DM_Sans,sans-serif] text-sm text-text-primary bg-transparent"
             />
-            <div className="px-3 py-2 text-[13px] text-text-muted bg-bg border-l border-border whitespace-nowrap">pmol/L</div>
+            <div className="px-3 py-2 text-[13px] text-text-muted bg-bg border-l border-border whitespace-nowrap">pg/mL</div>
           </div>
         </div>
 
@@ -134,16 +134,6 @@ export default function ScorePage({ values, onValuesChange: setValues }: ScorePa
         <div className="mb-[18px]">
           <label className="flex items-center gap-1.5 text-[13px] font-semibold text-text-primary mb-1.5">
             Number of involved organs
-            <span className="relative inline-flex cursor-help group">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8a9ab8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
-                <circle cx="12" cy="12" r="10" />
-                <path d="M12 16v-4" />
-                <path d="M12 8h.01" />
-              </svg>
-              <span className="invisible opacity-0 group-hover:visible group-hover:opacity-100 absolute bottom-[calc(100%+6px)] left-1/2 -translate-x-1/2 bg-navy text-white text-[11px] font-medium px-2 py-1 rounded whitespace-nowrap transition-opacity duration-150 pointer-events-none z-100 after:content-[''] after:absolute after:top-full after:left-1/2 after:-translate-x-1/2 after:border-5 after:border-transparent after:border-t-navy">
-                placeholder – explanation of this variable to be added
-              </span>
-            </span>
           </label>
           <div className="relative">
             <select
@@ -199,7 +189,7 @@ export default function ScorePage({ values, onValuesChange: setValues }: ScorePa
             <span className="relative inline-block underline decoration-dotted underline-offset-3 cursor-help group">
               ENT
               <span className="invisible opacity-0 group-hover:visible group-hover:opacity-100 absolute bottom-[calc(100%+6px)] left-1/2 -translate-x-1/2 bg-navy text-white text-[11px] font-medium px-2 py-1 rounded whitespace-nowrap transition-opacity duration-150 pointer-events-none z-100 after:content-[''] after:absolute after:top-full after:left-1/2 after:-translate-x-1/2 after:border-5 after:border-transparent after:border-t-navy">
-                ear-nose-throat
+                Ear-Nose-Throat
               </span>
             </span>
             {' '}involvement or asthma
@@ -264,16 +254,17 @@ export default function ScorePage({ values, onValuesChange: setValues }: ScorePa
                   <span className="text-lg font-semibold text-text-muted">/ 100</span>
                 </div>
                 <p className="text-sm text-text-secondary mb-[18px] leading-relaxed">
-                  The Eosinophilia Differentiation Score (EDS) is a multivariate tool that estimates the likelihood of
-                  clonal eosinophilia based on routinely available clinical parameters. It is intended as a supportive
-                  reference and should be interpreted in the full clinical context.
+                  The Eosinophilia Differentiation Score (EDS) displays the probability of clonal vs. non-clonal eosinophilia derived from the published training cohort.
                 </p>
                 <Link
                   to="/methods"
-                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-blue hover:text-blue-dark transition-colors duration-150"
+                  className="inline-flex items-center gap-2.5 text-sm font-semibold text-blue hover:text-blue-dark transition-colors duration-150 group"
                 >
-                  <ExternalLink size={15} />
-                  View methods & interpretation
+                  <span className="group-hover:underline decoration-1 underline-offset-2">Learn more about the results and how the EDS is calculated.</span>
+                  <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-blue-pale text-blue text-xs font-bold border border-transparent group-hover:border-blue">
+                    Methods
+                    <ArrowRight size={11} strokeWidth={2.5} />
+                  </span>
                 </Link>
               </div>
             </div>
@@ -282,6 +273,10 @@ export default function ScorePage({ values, onValuesChange: setValues }: ScorePa
 
             {/* Contribution cards */}
             <ContributionCards contributions={result.contributions} />
+
+            <p className="text-xs text-text-muted mt-5 leading-relaxed">
+              This prediction is for informational purposes only and cannot replace the judgement of a clinician.
+            </p>
           </div>
         )}
       </div>
