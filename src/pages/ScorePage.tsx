@@ -7,6 +7,18 @@ import { calculateResult } from '../utils/scoring';
 import Gauge from '../components/Gauge';
 import ContributionCards from '../components/ContributionCards';
 
+/* Example patients — clonal (1) and non-clonal (2) presentation */
+const EXAMPLE_PATIENTS: { label: string; values: FormValues }[] = [
+  {
+    label: 'Example 1',
+    values: { tryptase: '40', ige: '170', ldh: '160', b12: '1400', organs: '1', splen: 'yes', ent: 'no' },
+  },
+  {
+    label: 'Example 2',
+    values: { tryptase: '6', ige: '1800', ldh: '80', b12: '280', organs: '3', splen: 'no', ent: 'yes' },
+  },
+];
+
 interface ScorePageProps {
   values: FormValues;
   onValuesChange: React.Dispatch<React.SetStateAction<FormValues>>;
@@ -215,6 +227,22 @@ export default function ScorePage({ values, onValuesChange: setValues }: ScorePa
             >
               Yes
             </button>
+          </div>
+        </div>
+
+        {/* Example patients */}
+        <div className="mt-6 pt-5 border-t border-border">
+          <div className="text-[13px] text-text-muted mb-2">Or load an example patient:</div>
+          <div className="flex gap-2">
+            {EXAMPLE_PATIENTS.map((example) => (
+              <button
+                key={example.label}
+                onClick={() => setValues(example.values)}
+                className="flex-1 py-2 border border-border rounded-lg bg-white text-[13px] font-medium text-text-secondary cursor-pointer text-center hover:border-blue hover:bg-blue-pale hover:text-blue transition-all duration-150"
+              >
+                {example.label}
+              </button>
+            ))}
           </div>
         </div>
       </div>

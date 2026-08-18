@@ -39,7 +39,7 @@ const tabData: Record<TabId, TabData> = {
       { modality: 'Biopsy', findings: 'e.g., eosinophilic infiltration, eosinophilic inflammation, fibrotic changes, necrosis' },
       { modality: 'Magnetic resonance imaging (MRI)', findings: 'e.g., late gadolinium enhancement, thrombus, pericardial effusion, reduced ejection fraction, signs of myocardial edema' },
       { modality: 'Echocardiography', findings: 'e.g., valvular heart disease, reduced ejection fraction, pericardial effusion' },
-      { modality: 'Laboratory parameters', findings: 'elevated high-sensitivity troponin (hsTNI) and (glomerular filtration rate-corrected) N-terminal prohormone B-type natriuretic peptide (NT-proBNP)' },
+      { modality: 'Laboratory parameters', findings: 'e.g., elevated high-sensitivity troponin (hsTNI) and (glomerular filtration rate-corrected) N-terminal prohormone B-type natriuretic peptide (NT-proBNP)' },
       { modality: 'Electrocardiography (ECG)', findings: 'e.g., arrhythmia, low voltage, ST-segment abnormalities' },
     ],
     references: [
@@ -61,7 +61,7 @@ const tabData: Record<TabId, TabData> = {
       { modality: 'Biopsy/Bronchoalveolar lavage (BAL)', findings: 'e.g., eosinophilic infiltration, eosinophilic inflammation, high number of eosinophils in BAL' },
       { modality: 'Computed tomography (CT)', findings: 'e.g., parenchymal opacities, airway abnormalities, pleural effusion, nodules, emphysema' },
       { modality: 'X-ray', findings: 'e.g., parenchymal opacities, airway abnormalities, pleural effusion, nodules' },
-      { modality: 'Respiratory function test (RFT)', findings: 'e.g., reduced forced expiratory volume in 1 second (FEV1), reduced Tiffeneau-index, increased airway resistance, increased fractional exhaled nitric oxide (FeNO)' },
+      { modality: 'Pulmonary function test (PFT)', findings: 'e.g., reduced forced expiratory volume in 1 second (FEV1), reduced Tiffeneau-index, increased airway resistance, increased fractional exhaled nitric oxide (FeNO)' },
     ],
     references: [
       'Cottin, V., Bel, E., Bottero, P., et al. (2016). Respiratory manifestations of eosinophilic granulomatosis with polyangiitis (Churg-Strauss). Eur Respir J, 48(5), 1429-1441.',
@@ -74,7 +74,7 @@ const tabData: Record<TabId, TabData> = {
   ent: {
     rows: [
       { modality: 'Biopsy', findings: 'e.g., eosinophilic infiltration of nasal mucosa, eosinophilic inflammation in nasal polyps, tissue remodeling, fibrosis' },
-      { modality: 'CT', findings: 'e.g., signs of mucosal thickening, polypoid proliferation, air-fluid levels in acute sinusitis' },
+      { modality: 'Computed tomography (CT)', findings: 'e.g., signs of mucosal thickening, polypoid proliferation, air-fluid levels in acute sinusitis' },
       { modality: 'Rhinoscopy', findings: 'e.g., signs of mucosal inflammation, evidence of nasal polyposis' },
     ],
     references: [
@@ -89,7 +89,7 @@ const tabData: Record<TabId, TabData> = {
   gi: {
     rows: [
       { modality: 'Biopsy/Ascites punction', findings: 'e.g., eosinophilic tissue infiltration, eosinophilic crypt abscesses, elevated eosinophils in ascites' },
-      { modality: 'CT', findings: 'e.g., bowel wall thickening, ascites' },
+      { modality: 'Computed tomography (CT)', findings: 'e.g., bowel wall thickening, ascites' },
       { modality: 'Sonography', findings: 'e.g., ascites, diffuse bowel wall thickening of small and/or large bowel with preserved wall stratification' },
       { modality: 'Endoscopy', findings: 'e.g., edema, erosions, ulcerations, polypoid lesions, giant gastric folds (antrum/peripyloric)' },
     ],
@@ -143,8 +143,8 @@ const tabData: Record<TabId, TabData> = {
   cns: {
     rows: [
       { modality: 'Biopsy/Cerebrospinal fluid (CSF)', findings: 'e.g., thromboembolic occlusion of small arteries, petechial hemorrhages, granulomatous inflammation, eosinophilic invasion into CSF (rare)' },
-      { modality: 'CT', findings: 'e.g., hypodense areas in watershed/border-zone distribution, cortical and subcortical ischemic lesions' },
-      { modality: 'MRI', findings: 'e.g., ischemic lesions, cerebral infarction' },
+      { modality: 'Computed tomography (CT)', findings: 'e.g., hypodense areas in watershed/border-zone distribution, cortical and subcortical ischemic lesions' },
+      { modality: 'Magnetic resonance imaging (MRI)', findings: 'e.g., ischemic lesions, cerebral infarction' },
       { modality: 'Clinical examination', findings: 'e.g., hemiparesis, hemiplegia, dysarthria, seizure' },
     ],
     references: [
@@ -157,7 +157,7 @@ const tabData: Record<TabId, TabData> = {
   },
   spleen: {
     rows: [
-      { modality: 'CT', findings: 'splenomegaly' },
+      { modality: 'Computed tomography (CT)', findings: 'splenomegaly' },
       { modality: 'Sonography', findings: 'splenomegaly' },
       { modality: 'Clinical examination', findings: 'palpable spleen below costal arch' },
     ],
@@ -170,7 +170,7 @@ const tabData: Record<TabId, TabData> = {
   },
   lymph: {
     rows: [
-      { modality: 'CT', findings: 'significant/suspect lymphadenopathy' },
+      { modality: 'Computed tomography (CT)', findings: 'significant/suspect lymphadenopathy' },
       { modality: 'Sonography', findings: 'significant/suspect lymphadenopathy' },
       { modality: 'Clinical examination', findings: 'palpable lymph nodes' },
     ],
@@ -339,8 +339,7 @@ const criteriaData = [
         </table>
         <div className="mt-5">
           <div className="text-[13px] font-bold text-navy mb-1.5">Genetic abnormalities, clinical presentations, and targeted therapy of myeloid/lymphoid neoplasms with eosinophilia and tyrosine kinase gene fusions</div>
-          <p className="text-[11px] text-text-muted mb-2.5">Adapted from: Arber DA et al. <em>Blood</em>. 2022;140(11):1200–1228 (ICC Classification, Table 10)</p>
-          <div className="overflow-x-auto">
+            <div className="overflow-x-auto">
             <table className="w-full border-collapse text-[11px]">
               <thead>
                 <tr>
@@ -353,26 +352,65 @@ const criteriaData = [
               </thead>
               <tbody>
                 {[
-                  ['PDGFRA', 'Cryptic del 4q12 / FIP1L1::PDGFRA', 'CDK5RAP2; STRN; KIF5B; TNKS2; ETV6; BCR', 'Common: CEL-like BM with frequent extramedullary involvement; Others: B-ALL/LL, AML or mast cell proliferations', 'Excellent response to TKI (imatinib)'],
-                  ['PDGFRB', 't(5;12)(q32;p13.2) / ETV6::PDGFRB', '> 30 partners, cryptic', 'Common: CEL-like or monocytosis with eosinophilia; Others: ALL/LL, AML or mast cell proliferations', 'Excellent response to TKI'],
-                  ['FGFR1', 't(8;13)(p11.2;q12.1) / ZMYM2::FGFR1', '15 other partners including BCR', 'Common: Extramedullary T-ALL/LL with BM MPN-like or blast phase; Others: B-ALL/LL, myeloid sarcoma, AML or MPAL', 'High rate of response to FGFR inhibitor (e.g. pemigatinib), especially in chronic phase'],
-                  ['JAK2', 't(8;9)(p22;p24.1) / PCM1::JAK2', 'ETV6 and BCR', 'Common: MPN or MDS/MPN-like BM with eosinophilia; Others: B- and T-ALL/LL with BM MPN', 'Limited responses to ruxolitinib'],
-                  ['FLT3', 't(12;13)(p13.2;q12.2) / ETV6::FLT3', 'ZMYM2; TRIP11; SPTBN1; GOLGB1; CCDC88C; MYO18A; BCR', 'T-ALL/LL or myeloid sarcoma with CEL-like or MDS/MPN BM features', 'Various responses to specific FLT3 inhibitors'],
-                  ['ABL1', 't(9;12)(q34.1;p13.2) / ETV6::ABL1', 'Unknown', 'CML-like with frequent eosinophilia in chronic or blast phase', 'Various responses to second-generation TKI'],
+                  {
+                    gene: 'PDGFRA',
+                    fusion: <>Cryptic del 4q12 / <em>FIP1L1::PDGFRA</em></>,
+                    partners: <><em>CDK5RAP2</em>; <em>STRN</em>; <em>KIF5B</em>; <em>TNKS2</em>; <em>ETV6</em>; <em>BCR</em></>,
+                    manifestations: 'Common: CEL-like BM with frequent extramedullary involvement; Others: B-ALL/LL, AML or mast cell proliferations',
+                    therapy: 'Excellent response to TKI (imatinib)',
+                  },
+                  {
+                    gene: 'PDGFRB',
+                    fusion: <>t(5;12)(q32;p13.2) / <em>ETV6::PDGFRB</em></>,
+                    partners: <>&gt; 30 partners, cryptic</>,
+                    manifestations: 'Common: CEL-like or monocytosis with eosinophilia; Others: ALL/LL, AML or mast cell proliferations',
+                    therapy: 'Excellent response to TKI',
+                  },
+                  {
+                    gene: 'FGFR1',
+                    fusion: <>t(8;13)(p11.2;q12.1) / <em>ZMYM2::FGFR1</em></>,
+                    partners: <>15 other partners including <em>BCR</em></>,
+                    manifestations: 'Common: Extramedullary T-ALL/LL with BM MPN-like or blast phase; Others: B-ALL/LL, myeloid sarcoma, AML or MPAL',
+                    therapy: 'High rate of response to FGFR inhibitor (e.g. pemigatinib), especially in chronic phase',
+                  },
+                  {
+                    gene: 'JAK2',
+                    fusion: <>t(8;9)(p22;p24.1) / <em>PCM1::JAK2</em></>,
+                    partners: <><em>ETV6</em> and <em>BCR</em></>,
+                    manifestations: 'Common: MPN or MDS/MPN-like BM with eosinophilia; Others: B- and T-ALL/LL with BM MPN',
+                    therapy: 'Limited responses to ruxolitinib',
+                  },
+                  {
+                    gene: 'FLT3',
+                    fusion: <>t(12;13)(p13.2;q12.2) / <em>ETV6::FLT3</em></>,
+                    partners: <><em>ZMYM2</em>; <em>TRIP11</em>; <em>SPTBN1</em>; <em>GOLGB1</em>; <em>CCDC88C</em>; <em>MYO18A</em>; <em>BCR</em></>,
+                    manifestations: 'T-ALL/LL or myeloid sarcoma with CEL-like or MDS/MPN BM features',
+                    therapy: 'Various responses to specific FLT3 inhibitors',
+                  },
+                  {
+                    gene: 'ABL1',
+                    fusion: <>t(9;12)(q34.1;p13.2) / <em>ETV6::ABL1</em></>,
+                    partners: 'Unknown',
+                    manifestations: 'CML-like with frequent eosinophilia in chronic or blast phase',
+                    therapy: 'Various responses to second-generation TKI',
+                  },
                 ].map((row, i) => (
                   <tr key={i}>
-                    {row.map((cell, j) => (
-                      <td key={j} className="px-1.5 py-1 text-text-secondary border-b border-border align-top">
-                        {j === 0 ? <em>{cell}</em> : cell.includes('<em>') || cell.includes('em>') || cell.includes('(') || cell.includes('::') ? <span dangerouslySetInnerHTML={{ __html: cell }} /> : cell}
-                      </td>
-                    ))}
+                    <td className="px-1.5 py-1 text-text-secondary border-b border-border align-top"><em>{row.gene}</em></td>
+                    <td className="px-1.5 py-1 text-text-secondary border-b border-border align-top">{row.fusion}</td>
+                    <td className="px-1.5 py-1 text-text-secondary border-b border-border align-top">{row.partners}</td>
+                    <td className="px-1.5 py-1 text-text-secondary border-b border-border align-top">{row.manifestations}</td>
+                    <td className="px-1.5 py-1 text-text-secondary border-b border-border align-top">{row.therapy}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+          <p className="text-[11px] text-text-muted mt-2 leading-relaxed">
+            <span className="font-semibold">Abbreviations:</span> ALL, acute lymphoid leukemia; AML, acute myeloid leukemia; BM, bone marrow; CEL, chronic eosinophilic leukemia; CML, chronic myeloid leukemia; LL, lymphoblastic lymphoma; MDS, myelodysplastic syndrome; MPAL, mixed-phenotype acute leukemia; MPN, myeloproliferative neoplasm; TK gene, tyrosine kinase fusion gene; TKI, tyrosine kinase inhibitor
+          </p>
         </div>
-        <p className="text-[11px] text-text-muted italic mt-2.5">Adapted from the current ICC Classification (Arber DA et al. <em>Blood</em>. 2022;140(11):1200–1228)</p>
+        <p className="text-[11px] text-text-muted italic mt-2.5">ICC Classification (Arber DA et al. <em>Blood</em>. 2022)</p>
       </div>
     ),
   },
@@ -413,7 +451,7 @@ const criteriaData = [
             {[
               ['Atypical mast cell morphology', '> 25% of mast cells are spindle-shaped or have atypical immature morphology in bone marrow biopsy or other extracutaneous organ sections'],
               ['Abnormal surface markers', 'Mast cells express CD25, CD2, and/or CD30 in addition to standard mast cell markers (in bone marrow, peripheral blood, or extracutaneous organs)'],
-              ['KIT D816V mutation', 'Activating KIT D816V or other activating KIT mutation detected in bone marrow, peripheral blood, or extracutaneous organs'],
+              [<><em>KIT</em> D816V mutation</>, <>Activating <em>KIT</em> D816V or other activating <em>KIT</em> mutation detected in bone marrow, peripheral blood, or extracutaneous organs</>],
               ['Elevated serum tryptase', 'Persistently > 20 ng/mL. Note: in cases of SM with associated myeloid neoplasm (SM-AMN), elevated tryptase does not count as a SM minor criterion'],
             ].map((row, i) => (
               <tr key={i}>
@@ -426,7 +464,7 @@ const criteriaData = [
             </td></tr>
           </tbody>
         </table>
-        <p className="text-[11px] text-text-muted italic mt-2.5">Adapted from the current ICC Classification (Arber DA et al. <em>Blood</em>. 2022;140(11):1200–1228)</p>
+        <p className="text-[11px] text-text-muted italic mt-2.5">ICC Classification (Arber DA et al. <em>Blood</em>. 2022)</p>
       </div>
     ),
   },
@@ -469,7 +507,7 @@ const criteriaData = [
         <div className="mt-3 bg-[#fffbec] text-navy text-xs font-medium p-2.5 rounded-lg border-l-3 border-accent-orange">
           ⚡ These classification criteria should be applied to classify a patient as having eosinophilic granulomatosis with polyangiitis when a diagnosis of small- or medium-vessel vasculitis has been made. Alternate diagnoses mimicking vasculitis should be excluded prior to applying the criteria. A score of ≥ 6 is needed for classification of EGPA.
         </div>
-        <p className="text-[11px] text-text-muted italic mt-2.5">Adapted from the ACR/EULAR Classification (Grayson PC et al. <em>Ann Rheum Dis</em>. 2022;81(3):309–314)</p>
+        <p className="text-[11px] text-text-muted italic mt-2.5">ACR/EULAR Classification (Grayson PC et al. <em>Ann Rheum Dis</em>. 2022)</p>
       </div>
     ),
   },
@@ -514,7 +552,7 @@ const criteriaData = [
             </td></tr>
           </tbody>
         </table>
-        <p className="text-[11px] text-text-muted italic mt-2.5">Adapted from the current ICC Classification (Arber DA et al. <em>Blood</em>. 2022;140(11):1200–1228)</p>
+        <p className="text-[11px] text-text-muted italic mt-2.5">ICC Classification (Arber DA et al. <em>Blood</em>. 2022)</p>
       </div>
     ),
   },
@@ -682,10 +720,10 @@ function GeneticAccordion({
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-white border border-border rounded-xl shadow-sm cursor-pointer select-none overflow-hidden transition-[box-shadow,border-color] duration-150 hover:shadow-md hover:border-blue">
+    <div className="bg-white border border-border rounded-xl shadow-sm overflow-hidden transition-[box-shadow,border-color] duration-150 hover:shadow-md hover:border-blue">
       <div
         onClick={onToggle}
-        className={`flex items-center gap-3.5 ${isOpen ? 'p-5' : 'p-3.5'}`}
+        className={`flex items-center gap-3.5 cursor-pointer select-none ${isOpen ? 'p-5' : 'p-3.5'}`}
       >
         <div className={`${isOpen ? 'w-9 h-9' : 'w-8 h-8'} bg-blue-pale rounded-lg flex items-center justify-center text-blue shrink-0`}>
           {icon}
