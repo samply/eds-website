@@ -30,7 +30,7 @@ export default function MethodsPage() {
           with eosinophils ≥ 0.5 × 10⁹/L. A clonal phenotype was indicated by the continuous predictors elevated
           serum tryptase, elevated vitamin B12, lower immunoglobulin E, lower lactate dehydrogenase, lower number
           of involved organ sites, as well as the categorical predictors presence of splenomegaly and absence of
-          asthma and/or ENT involvement.
+          asthma and/or ear-nose-throat (ENT) involvement.
         </p>
         <p className="text-sm text-text-secondary leading-relaxed mb-3.5">
           The EDS linear predictor η was derived by computing a weighted sum of all patient-specific variable values

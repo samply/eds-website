@@ -15,9 +15,9 @@ function arcPath(cx: number, cy: number, r: number, startDeg: number, endDeg: nu
 }
 
 export default function Gauge({ percentage }: GaugeProps) {
-  const cx = 85;
-  const cy = 85;
-  const r = 65;
+  const cx = 110;
+  const cy = 110;
+  const r = 85;
   const startDeg = -135;
   const endDeg = 135;
   const fillDeg = startDeg + (endDeg - startDeg) * percentage / 100;
@@ -27,32 +27,33 @@ export default function Gauge({ percentage }: GaugeProps) {
   const dot = polarToXY(cx, cy, r, fillDeg);
 
   return (
-    <svg className="w-[170px] h-[170px]" viewBox="0 0 170 170">
+    <svg className="w-[220px] h-[200px]" viewBox="0 0 220 200">
       {/* Track */}
-      <path d={trackD} fill="none" stroke="#e8eef9" strokeWidth="14" strokeLinecap="round" />
+      <path d={trackD} fill="none" stroke="#e8eef9" strokeWidth="17" strokeLinecap="round" />
       {/* Fill */}
-      <path d={fillD} fill="none" stroke="#2563eb" strokeWidth="14" strokeLinecap="round" />
+      <path d={fillD} fill="none" stroke="#2563eb" strokeWidth="17" strokeLinecap="round" />
       {/* Needle dot */}
-      <circle cx={dot.x} cy={dot.y} r="7" fill="white" stroke="#1a2b4a" strokeWidth="3" />
-      {/* Text */}
+      <circle cx={dot.x} cy={dot.y} r="8.5" fill="white" stroke="#1a2b4a" strokeWidth="3.5" />
+      {/* Score */}
       <text
-        x="85" y="100"
+        x={cx} y="120"
         textAnchor="middle"
         fontFamily="Sora, sans-serif"
-        fontSize="34"
+        fontSize="48"
         fontWeight="700"
         fill="#1a2b4a"
       >
         {Math.round(percentage)}
       </text>
       <text
-        x="85" y="122"
+        x={cx} y="148"
         textAnchor="middle"
         fontFamily="DM Sans, sans-serif"
-        fontSize="11"
+        fontSize="16"
+        fontWeight="600"
         fill="#8a9ab8"
       >
-        %
+        / 100
       </text>
     </svg>
   );

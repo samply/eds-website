@@ -1,4 +1,4 @@
-import { Mail, Phone } from 'lucide-react';
+import { Mail } from 'lucide-react';
 
 export default function ContactPage() {
   return (
@@ -18,16 +18,6 @@ export default function ContactPage() {
           </div>
           <div className="text-xs text-text-muted mt-0.5">Department of Hematology and Oncology</div>
           <div className="text-xs text-text-muted mt-0.5">Theodor-Kutzer-Ufer 1-3, 68167 Mannheim</div>
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <div className="flex items-center gap-2.5 text-[13px] text-text-secondary">
-            <Phone size={15} className="text-blue shrink-0" />
-            0621 / 383-4214
-          </div>
-          <div className="flex items-center gap-2.5 text-[13px] text-text-secondary">
-            <Mail size={15} className="text-blue shrink-0" />
-            <a href="mailto:med3-sek@umm.de" className="text-blue no-underline hover:underline">med3-sek@umm.de</a>
-          </div>
         </div>
       </div>
 
@@ -53,9 +43,6 @@ export default function ContactPage() {
               <a href="#" className="text-blue font-semibold no-underline hover:underline">
                 Consent form — Laboratory form (PDF) ↗
               </a>
-            </div>
-            <div className="text-text-muted">
-              For questions regarding enrollment, please contact us (see general contact).
             </div>
           </div>
         </div>

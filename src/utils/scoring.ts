@@ -1,16 +1,48 @@
 import type { FormValues, Contribution, ResultData, CardiacResult, CardiacScore, CardiacRisk } from '../types';
 
 /**
+ * Plausible input ranges, derived from the 1st and 99th percentile of the raw
+ * values in the underlying cohort. Values outside these bounds are clamped to
+ * the limit before entering the model.
+ */
+export const INPUT_LIMITS = {
+  tryptase: { min: 1.9, max: 793.8 },
+  ige: { min: 1.5, max: 7626 },
+  ldh: { min: 91.6, max: 1199 },
+  b12: { min: 190, max: 6000 },
+  organs: { min: 0, max: 8 },
+} as const;
+
+export type LimitedField = keyof typeof INPUT_LIMITS;
+
+/** Parse a form value and clamp it into the observed range of the cohort. */
+export function clampValue(raw: string, field: LimitedField): number {
+  const n = field === 'organs' ? parseInt(raw) : parseFloat(raw);
+  if (isNaN(n)) return 0;
+  const { min, max } = INPUT_LIMITS[field];
+  return Math.min(Math.max(n, min), max);
+}
+
+/** True when a filled-in value lies outside the observed range. */
+export function isOutOfRange(raw: string, field: LimitedField): boolean {
+  if (raw === '') return false;
+  const n = field === 'organs' ? parseInt(raw) : parseFloat(raw);
+  if (isNaN(n)) return false;
+  const { min, max } = INPUT_LIMITS[field];
+  return n < min || n > max;
+}
+
+/**
  * Real EDS coefficients from the published logistic regression model (Table 1).
  * Linear predictor: η = (Σ wⱼ × xⱼ) − w₀
  * Probability: P(EDS) = 1 / (1 + e^(−η))
  */
 export function computeScore(values: FormValues): number {
-  const tryptase = parseFloat(values.tryptase) || 0;
-  const ige = parseFloat(values.ige) || 0;
-  const ldh = parseFloat(values.ldh) || 0;
-  const b12 = parseFloat(values.b12) || 0;
-  const organs = parseInt(values.organs) || 0;
+  const tryptase = clampValue(values.tryptase, 'tryptase');
+  const ige = clampValue(values.ige, 'ige');
+  const ldh = clampValue(values.ldh, 'ldh');
+  const b12 = clampValue(values.b12, 'b12');
+  const organs = clampValue(values.organs, 'organs');
   const splen = values.splen === 'yes' ? 1 : 0;
   const ent = values.ent === 'yes' ? 1 : 0;
 
@@ -42,11 +74,11 @@ export function computeScore(values: FormValues): number {
  * Positive → clonal direction, negative → non-clonal direction.
  */
 export function computeContributions(values: FormValues): Contribution[] {
-  const tryptase = parseFloat(values.tryptase) || 0;
-  const ige = parseFloat(values.ige) || 0;
-  const ldh = parseFloat(values.ldh) || 0;
-  const b12 = parseFloat(values.b12) || 0;
-  const organs = parseInt(values.organs) || 0;
+  const tryptase = clampValue(values.tryptase, 'tryptase');
+  const ige = clampValue(values.ige, 'ige');
+  const ldh = clampValue(values.ldh, 'ldh');
+  const b12 = clampValue(values.b12, 'b12');
+  const organs = clampValue(values.organs, 'organs');
   const splen = values.splen;
   const ent = values.ent;
 

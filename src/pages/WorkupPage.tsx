@@ -1,4 +1,5 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useId } from 'react';
+import { createPortal } from 'react-dom';
 import { ChevronDown, Dna, Database } from 'lucide-react';
 import {
   MastCellIcon,
@@ -16,6 +17,90 @@ import {
   LymphNodeIcon,
 } from '../components/icons';
 
+/* ── Abbreviations of the M/LN-TK table, shown as hover tooltips ── */
+const ABBREVIATIONS: Record<string, string> = {
+  ALL: 'Acute lymphoid leukemia',
+  AML: 'Acute myeloid leukemia',
+  BM: 'Bone marrow',
+  CEL: 'Chronic eosinophilic leukemia',
+  CML: 'Chronic myeloid leukemia',
+  LL: 'Lymphoblastic lymphoma',
+  MDS: 'Myelodysplastic syndrome',
+  MPAL: 'Mixed-phenotype acute leukemia',
+  MPN: 'Myeloproliferative neoplasm',
+  TK: 'Tyrosine kinase',
+  TKI: 'Tyrosine kinase inhibitor',
+};
+
+/* Longest terms first so e.g. "SM-AMN" wins over "SM". */
+const ABBR_RE = new RegExp(
+  `\\b(${Object.keys(ABBREVIATIONS)
+    .sort((a, b) => b.length - a.length)
+    .map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+    .join('|')})\\b`,
+  'g'
+);
+
+/**
+ * An abbreviation with its expansion on hover/focus. The tooltip is rendered
+ * into document.body so it is not clipped by scrollable table containers.
+ */
+function Abbr({ term }: { term: string }) {
+  const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
+  const ref = useRef<HTMLSpanElement>(null);
+  const tooltipId = useId();
+
+  const show = () => {
+    const rect = ref.current?.getBoundingClientRect();
+    if (rect) setPos({ top: rect.top - 6, left: rect.left + rect.width / 2 });
+  };
+  const hide = () => setPos(null);
+
+  return (
+    <>
+      <span
+        ref={ref}
+        tabIndex={0}
+        onMouseEnter={show}
+        onMouseLeave={hide}
+        onFocus={show}
+        onBlur={hide}
+        aria-describedby={pos ? tooltipId : undefined}
+        className="underline decoration-dotted decoration-text-muted underline-offset-2 cursor-help outline-none"
+      >
+        {term}
+      </span>
+      {pos &&
+        createPortal(
+          <span
+            id={tooltipId}
+            role="tooltip"
+            className="fixed z-[100] -translate-x-1/2 -translate-y-full bg-navy text-white text-[11px] font-medium px-2 py-1 rounded shadow-md pointer-events-none max-w-[240px] text-center leading-snug"
+            style={{ top: pos.top, left: pos.left }}
+          >
+            {ABBREVIATIONS[term]}
+          </span>,
+          document.body
+        )}
+    </>
+  );
+}
+
+/** Turn every known abbreviation inside a plain string into a hover tooltip. */
+function AbbrText({ children }: { children: string }) {
+  const parts: React.ReactNode[] = [];
+  let last = 0;
+  ABBR_RE.lastIndex = 0;
+  for (let m = ABBR_RE.exec(children); m !== null; m = ABBR_RE.exec(children)) {
+    if (m.index > last) parts.push(children.slice(last, m.index));
+    parts.push(<Abbr key={m.index} term={m[0]} />);
+    last = m.index + m[0].length;
+  }
+  if (!parts.length) return <>{children}</>;
+  if (last < children.length) parts.push(children.slice(last));
+  return <>{parts}</>;
+}
+
 /* ── Clinical tab types & data ── */
 type TabId = 'cardiac' | 'pulmonary' | 'ent' | 'gi' | 'skin' | 'kidney' | 'pns' | 'cns' | 'spleen' | 'lymph';
 
@@ -32,17 +117,18 @@ const TAB_ICONS: Record<TabId, React.ReactNode> = {
   lymph: <LymphNodeIcon size={15} />,
 };
 
+/* Organ systems are listed alphabetically by label. */
 const TABS: { id: TabId; label: string; cardTitle?: string }[] = [
   { id: 'cardiac', label: 'Cardiac involvement' },
-  { id: 'pulmonary', label: 'Pulmonary involvement' },
+  { id: 'cns', label: 'CNS involvement' },
   { id: 'ent', label: 'ENT involvement', cardTitle: 'Ear-nose-throat (ENT) involvement' },
   { id: 'gi', label: 'Gastrointestinal incl. liver', cardTitle: 'Gastrointestinal involvement including liver involvement' },
-  { id: 'skin', label: 'Skin involvement' },
   { id: 'kidney', label: 'Kidney involvement' },
-  { id: 'pns', label: 'PNS involvement' },
-  { id: 'cns', label: 'CNS involvement' },
-  { id: 'spleen', label: 'Spleen involvement' },
   { id: 'lymph', label: 'Lymph node involvement' },
+  { id: 'pns', label: 'PNS involvement' },
+  { id: 'pulmonary', label: 'Pulmonary involvement' },
+  { id: 'skin', label: 'Skin involvement' },
+  { id: 'spleen', label: 'Spleen involvement' },
 ];
 
 interface TabRow { modality: string; findings: string }
@@ -54,8 +140,8 @@ const tabData: Record<TabId, TabData> = {
       { modality: 'Biopsy', findings: 'e.g., eosinophilic infiltration, eosinophilic inflammation, fibrotic changes, necrosis' },
       { modality: 'Magnetic resonance imaging (MRI)', findings: 'e.g., late gadolinium enhancement, thrombus, pericardial effusion, reduced ejection fraction, signs of myocardial edema' },
       { modality: 'Echocardiography', findings: 'e.g., valvular heart disease, reduced ejection fraction, pericardial effusion' },
-      { modality: 'Laboratory parameters', findings: 'e.g., elevated high-sensitivity troponin (hsTNI) and (glomerular filtration rate-corrected) N-terminal prohormone B-type natriuretic peptide (NT-proBNP)' },
       { modality: 'Electrocardiography (ECG)', findings: 'e.g., arrhythmia, low voltage, ST-segment abnormalities' },
+      { modality: 'Laboratory parameters', findings: 'e.g., elevated troponin I or T (TnI/TnT) and (glomerular filtration rate-corrected) N-terminal prohormone B-type natriuretic peptide (NT-proBNP)' },
     ],
     references: [
       'Bishop, G. G., Bergin, J. D., & Kramer, C. M. (2001). Hypereosinophilic syndrome and restrictive cardiomyopathy due to apical thrombi. Circulation, 104(2), E3-4.',
@@ -75,8 +161,8 @@ const tabData: Record<TabId, TabData> = {
     rows: [
       { modality: 'Biopsy/Bronchoalveolar lavage (BAL)', findings: 'e.g., eosinophilic infiltration, eosinophilic inflammation, high number of eosinophils in BAL' },
       { modality: 'Computed tomography (CT)', findings: 'e.g., parenchymal opacities, airway abnormalities, pleural effusion, nodules, emphysema' },
-      { modality: 'X-ray', findings: 'e.g., parenchymal opacities, airway abnormalities, pleural effusion, nodules' },
-      { modality: 'Pulmonary function test (PFT)', findings: 'e.g., reduced forced expiratory volume in 1 second (FEV1), reduced Tiffeneau-index, increased airway resistance, increased fractional exhaled nitric oxide (FeNO)' },
+      { modality: 'X-ray', findings: 'e.g., parenchymal opacities, airway abnormalities, pleural effusion, nodules, emphysema' },
+      { modality: 'Pulmonary function test (PFT)', findings: 'e.g., reduced forced expiratory volume in 1 second (FEV1), increased fractional exhaled nitric oxide (FeNO), reduced Tiffeneau-index, increased airway resistance (Rtot)' },
     ],
     references: [
       'Cottin, V., Bel, E., Bottero, P., et al. (2016). Respiratory manifestations of eosinophilic granulomatosis with polyangiitis (Churg-Strauss). Eur Respir J, 48(5), 1429-1441.',
@@ -88,7 +174,7 @@ const tabData: Record<TabId, TabData> = {
   },
   ent: {
     rows: [
-      { modality: 'Biopsy', findings: 'e.g., eosinophilic infiltration of nasal mucosa, eosinophilic inflammation in nasal polyps, tissue remodeling, fibrosis' },
+      { modality: 'Biopsy', findings: 'e.g., eosinophilic infiltration of nasal mucosa, eosinophilic inflammation in nasal polyps, fibrosis' },
       { modality: 'Computed tomography (CT)', findings: 'e.g., signs of mucosal thickening, polypoid proliferation, air-fluid levels in acute sinusitis' },
       { modality: 'Rhinoscopy', findings: 'e.g., signs of mucosal inflammation, evidence of nasal polyposis' },
     ],
@@ -103,10 +189,10 @@ const tabData: Record<TabId, TabData> = {
   },
   gi: {
     rows: [
-      { modality: 'Biopsy/Ascites punction', findings: 'e.g., eosinophilic tissue infiltration, eosinophilic crypt abscesses, elevated eosinophils in ascites' },
-      { modality: 'Computed tomography (CT)', findings: 'e.g., bowel wall thickening, ascites' },
-      { modality: 'Sonography', findings: 'e.g., ascites, diffuse bowel wall thickening of small and/or large bowel with preserved wall stratification' },
+      { modality: 'Biopsy/Ascites paracentesis', findings: 'e.g., eosinophilic tissue infiltration, elevated eosinophils in ascites' },
       { modality: 'Endoscopy', findings: 'e.g., edema, erosions, ulcerations, polypoid lesions, giant gastric folds (antrum/peripyloric)' },
+      { modality: 'Computed tomography (CT)', findings: 'e.g., ascites, bowel wall thickening, hepatomegaly' },
+      { modality: 'Sonography', findings: 'e.g., ascites, diffuse bowel wall thickening of small and/or large bowel, hepatomegaly' },
     ],
     references: [
       'Groh, M., Rohmer, J., Etienne, N., et al. (2023). French guidelines for the etiological workup of eosinophilia. Orphanet J Rare Dis, 18(1), 100.',
@@ -132,7 +218,8 @@ const tabData: Record<TabId, TabData> = {
   kidney: {
     rows: [
       { modality: 'Biopsy', findings: 'e.g., eosinophilic interstitial nephritis, glomerular thrombosis and necrosis, tubulointerstitial nephritis, tubular atrophy' },
-      { modality: 'Laboratory examinations', findings: 'e.g., impaired renal function, creatinine elevation, proteinuria in urine diagnostics' },
+      { modality: 'Laboratory examinations', findings: 'e.g., impaired renal function, creatinine elevation' },
+      { modality: 'Urine analyses', findings: 'e.g., proteinuria, hematuria' },
     ],
     references: [
       'Durel, C. A., Sinico, R. A., Teixeira, V., et al. (2021). Renal involvement in EGPA: a multicentric retrospective study of 63 biopsy-proven cases. Rheumatology (Oxford), 60(1), 359-365.',
@@ -185,8 +272,8 @@ const tabData: Record<TabId, TabData> = {
   },
   lymph: {
     rows: [
-      { modality: 'Computed tomography (CT)', findings: 'significant/suspect lymphadenopathy' },
-      { modality: 'Sonography', findings: 'significant/suspect lymphadenopathy' },
+      { modality: 'Computed tomography (CT)', findings: 'lymphadenopathy' },
+      { modality: 'Sonography', findings: 'lymphadenopathy' },
       { modality: 'Clinical examination', findings: 'palpable lymph nodes' },
     ],
     references: [
@@ -278,6 +365,7 @@ export default function WorkupPage() {
         'Baer, C., Muehlbacher, V., Kern, W., Haferlach, C., & Haferlach, T. (2018). Molecular genetic characterization of myeloid/lymphoid neoplasms associated with eosinophilia and rearrangement of PDGFRA, PDGFRB, FGFR1 or PCM1-JAK2. Haematologica, 103(8), e348-e350.',
         'Cools, J., DeAngelo, D. J., Gotlib, J., et al. (2003). A tyrosine kinase created by fusion of the PDGFRA and FIP1L1 genes as a therapeutic target of imatinib. N Engl J Med, 348(13), 1201-1214.',
         'Gerds, A. T., Gotlib, J., Bose, P., et al. (2020). Myeloid/Lymphoid Neoplasms with Eosinophilia and TK Fusion Genes, NCCN Guidelines. J Natl Compr Canc Netw, 18(9), 1248-1269.',
+        'Meggendorfer, M., Walter, W., & Haferlach, T. (2020). WGS and WTS in leukaemia: A tool for diagnostics? Best Pract Res Clin Haematol, 33(3), 101190.',
         'Metzgeroth, G., Steiner, L., Naumann, N., et al. (2023). Myeloid/lymphoid neoplasms with eosinophilia and TK gene fusions. Leukemia, 37(9), 1860-1867.',
         'Reiter, A., & Gotlib, J. (2017). Myeloid neoplasms with eosinophilia. Blood, 129(6), 704-714.',
         'Reiter, A., Metzgeroth, G., & Cross, N. C. P. (2025). How I diagnose and treat myeloid/lymphoid neoplasms with TK gene fusions. Blood, 145(16), 1758-1768.',
@@ -407,16 +495,13 @@ const criteriaData = [
                     <td className="px-1.5 py-1 text-text-secondary border-b border-border align-top"><em>{row.gene}</em></td>
                     <td className="px-1.5 py-1 text-text-secondary border-b border-border align-top">{row.fusion}</td>
                     <td className="px-1.5 py-1 text-text-secondary border-b border-border align-top">{row.partners}</td>
-                    <td className="px-1.5 py-1 text-text-secondary border-b border-border align-top">{row.manifestations}</td>
-                    <td className="px-1.5 py-1 text-text-secondary border-b border-border align-top">{row.therapy}</td>
+                    <td className="px-1.5 py-1 text-text-secondary border-b border-border align-top"><AbbrText>{row.manifestations}</AbbrText></td>
+                    <td className="px-1.5 py-1 text-text-secondary border-b border-border align-top"><AbbrText>{row.therapy}</AbbrText></td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          <p className="text-[11px] text-text-muted mt-2 leading-relaxed">
-            <span className="font-semibold">Abbreviations:</span> ALL, acute lymphoid leukemia; AML, acute myeloid leukemia; BM, bone marrow; CEL, chronic eosinophilic leukemia; CML, chronic myeloid leukemia; LL, lymphoblastic lymphoma; MDS, myelodysplastic syndrome; MPAL, mixed-phenotype acute leukemia; MPN, myeloproliferative neoplasm; TK gene, tyrosine kinase fusion gene; TKI, tyrosine kinase inhibitor
-          </p>
         </div>
         <p className="text-[11px] text-text-muted italic mt-2.5">ICC Classification (Arber DA et al. <em>Blood</em>. 2022)</p>
       </div>
@@ -644,7 +729,7 @@ function GeneticWorkup() {
         onToggle={() => toggleStep(1)}
         icon={<Dna size={18} />}
         title="Initial genetic diagnostics"
-        subtitle="Conventional cytogenetics, FISH, RT-PCR, and NGS"
+        subtitle="Conventional cytogenetics, FISH, PCR, and NGS"
       >
         <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-3 my-3.5">
           <MethodCard title="Conventional cytogenetics (karyotype)">
@@ -660,10 +745,9 @@ function GeneticWorkup() {
               <li>Further assessment for rearrangements and aberrations involving <em>PDGFRA</em>, <em>PDGFRB</em>, <em>FGFR1</em>, and <em>JAK2</em></li>
             </ul>
           </MethodCard>
-          <MethodCard title="Reverse transcriptase PCR (RT-PCR)">
+          <MethodCard title="Polymerase Chain Reaction (PCR)">
             <ul className="list-disc pl-4 text-xs text-text-secondary space-y-0.5">
-              <li>Assessment of most common rearrangements including <em>FIP1L1::PDGFRA</em>, <em>ETV6::PDGFRB</em>, <em>ZMYM2::FGFR1</em>, <em>PCM1::JAK2</em>, and <em>ETV6::ABL1</em></li>
-              <li>In cases with a known rearrangement, PCR-based analyses can also be used to monitor treatment response</li>
+              <li>Assessment of established rearrangements including <em>FIP1L1::PDGFRA</em>, <em>ETV6::PDGFRB</em>, <em>ZMYM2::FGFR1</em>, <em>PCM1::JAK2</em>, and <em>ETV6::ABL1</em></li>
             </ul>
           </MethodCard>
           <MethodCard title="Myeloid gene panel (NGS)">
@@ -684,8 +768,8 @@ function GeneticWorkup() {
         <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-3 my-3.5">
           <MethodCard title="Whole transcriptome sequencing (WTS) / Whole genome sequencing (WGS)">
             <ul className="list-disc pl-4 text-xs text-text-secondary space-y-0.5">
-              <li>Detection of rare mutations, e.g., in <em>RUNX1</em>, associated with <em>FGFR1</em> rearrangements</li>
-              <li>Assessment of mutations e.g., <em>ASXL1</em>, <em>BCOR</em>, <em>TET2</em>, <em>DNMT3A</em>, <em>TP53</em>, <em>ZRSR2</em></li>
+              <li>Identifying gene expression profiles and fusion transcripts</li>
+              <li>Detection of single nucleotide variants (SNV), small deletions/insertions (Indels), structural variants (SV) and copy number variants (CNV)</li>
             </ul>
           </MethodCard>
         </div>
