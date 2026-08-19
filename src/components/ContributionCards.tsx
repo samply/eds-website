@@ -1,14 +1,22 @@
 import type { Contribution } from '../types';
-import { Atom, TestTube, Zap, Pill, Heart, Shield, Wind } from 'lucide-react';
+import {
+  MastCellIcon,
+  AntibodyIcon,
+  LdhIcon,
+  MoleculeIcon,
+  OrgansIcon,
+  SpleenIcon,
+  EntIcon,
+} from './icons';
 
 const iconMap: Record<string, React.ReactNode> = {
-  'Serum tryptase': <Atom size={20} />,
-  'Immunoglobulin E': <TestTube size={20} />,
-  'LDH': <Zap size={20} />,
-  'Vitamin B12': <Pill size={20} />,
-  'Involved organs': <Heart size={20} />,
-  'Splenomegaly': <Shield size={20} />,
-  'ENT / Asthma': <Wind size={20} />,
+  'Serum tryptase': <MastCellIcon size={20} />,
+  'Immunoglobulin E': <AntibodyIcon size={20} />,
+  'Lactate dehydrogenase': <LdhIcon size={20} />,
+  'Vitamin B12': <MoleculeIcon size={20} />,
+  'Involved organs': <OrgansIcon size={20} />,
+  'Splenomegaly': <SpleenIcon size={20} />,
+  'ENT / Asthma': <EntIcon size={20} />,
 };
 
 interface ContributionCardsProps {
@@ -33,7 +41,7 @@ export default function ContributionCards({ contributions }: ContributionCardsPr
               <div className="w-9 h-9 bg-white border border-border rounded-lg flex items-center justify-center text-blue shrink-0">
                 {iconMap[c.name] || null}
               </div>
-              <div className="text-xs font-semibold text-text-primary text-center leading-tight">
+              <div className="text-xs font-semibold text-text-primary text-center leading-tight min-h-[2lh] flex items-center">
                 {c.name}
               </div>
               <div className={`text-base font-bold ${isPos ? 'text-blue' : 'text-text-secondary'}`}>

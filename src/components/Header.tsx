@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'wouter';
 import { Info } from 'lucide-react';
+import { EosinophilIcon } from './icons';
 
 const navItems = [
   { path: '/score', label: 'Score' },
@@ -21,7 +22,11 @@ export default function Header({ onAbout }: HeaderProps) {
         {/* Top row: Logo + Title + About */}
         <div className="flex items-center justify-between py-2 lg:py-0 gap-2 sm:gap-4 lg:gap-6">
           <div className="flex items-center gap-2 sm:gap-3">
-            <img src="/logo.svg" alt="Logo" className="w-7 h-7 sm:w-9 sm:h-9 shrink-0" />
+            <EosinophilIcon
+              size={28}
+              className="w-7 h-7 sm:w-9 sm:h-9 shrink-0"
+              style={{ color: '#728edc' }}
+            />
             <span className="font-heading font-semibold text-[14px] sm:text-[17px] text-navy tracking-tight whitespace-nowrap">
               Eosinophilia Differentiation Score
             </span>

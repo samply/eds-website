@@ -53,7 +53,7 @@ export function computeContributions(values: FormValues): Contribution[] {
   const raw = [
     { name: 'Serum tryptase',           val:  0.125516906 * tryptase },
     { name: 'Immunoglobulin E',   val: -0.002612035 * ige },
-    { name: 'LDH',                val: -0.002178421 * ldh },
+    { name: 'Lactate dehydrogenase',                val: -0.002178421 * ldh },
     { name: 'Vitamin B12',        val:  0.003489235 * b12 },
     { name: 'Involved organs',    val: -0.860808755 * organs },
     { name: 'Splenomegaly',       val:  splen === 'yes' ? 2.855350231 : 0 },

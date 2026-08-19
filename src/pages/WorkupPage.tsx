@@ -1,20 +1,35 @@
 import { useState, useRef, useCallback } from 'react';
-import { ChevronDown, Dna, Database, Heart, Wind, Stethoscope, Brain, Zap, UtensilsCrossed, Sun, Droplets, Shield, CircleDot } from 'lucide-react';
+import { ChevronDown, Dna, Database } from 'lucide-react';
+import {
+  MastCellIcon,
+  VesselsIcon,
+  EosinophilIcon,
+  SpleenIcon,
+  HeartIcon,
+  LungsIcon,
+  EntIcon,
+  StomachIcon,
+  SkinIcon,
+  KidneyIcon,
+  NerveIcon,
+  BrainIcon,
+  LymphNodeIcon,
+} from '../components/icons';
 
 /* ── Clinical tab types & data ── */
 type TabId = 'cardiac' | 'pulmonary' | 'ent' | 'gi' | 'skin' | 'kidney' | 'pns' | 'cns' | 'spleen' | 'lymph';
 
 const TAB_ICONS: Record<TabId, React.ReactNode> = {
-  cardiac: <Heart size={15} />,
-  pulmonary: <Wind size={15} />,
-  ent: <Stethoscope size={15} />,
-  gi: <UtensilsCrossed size={15} />,
-  skin: <Sun size={15} />,
-  kidney: <Droplets size={15} />,
-  pns: <Zap size={15} />,
-  cns: <Brain size={15} />,
-  spleen: <Shield size={15} />,
-  lymph: <CircleDot size={15} />,
+  cardiac: <HeartIcon size={15} />,
+  pulmonary: <LungsIcon size={15} />,
+  ent: <EntIcon size={15} />,
+  gi: <StomachIcon size={15} />,
+  skin: <SkinIcon size={15} />,
+  kidney: <KidneyIcon size={15} />,
+  pns: <NerveIcon size={15} />,
+  cns: <BrainIcon size={15} />,
+  spleen: <SpleenIcon size={15} />,
+  lymph: <LymphNodeIcon size={15} />,
 };
 
 const TABS: { id: TabId; label: string; cardTitle?: string }[] = [
@@ -313,14 +328,7 @@ const criteriaData = [
     id: 'mln',
     title: 'Myeloid / Lymphoid Neoplasms with TK Fusion Genes (M/LN-TK)',
     icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-        <path d="M8 2 C8 7, 16 9, 16 12 C16 15, 8 17, 8 22" strokeLinecap="round" />
-        <path d="M16 2 C16 7, 8 9, 8 12 C8 15, 16 17, 16 22" strokeLinecap="round" />
-        <line x1="9.2" y1="5.5" x2="14.8" y2="5.5" strokeLinecap="round" />
-        <line x1="9.5" y1="9.5" x2="14.5" y2="9.5" strokeLinecap="round" />
-        <line x1="9.5" y1="14.5" x2="14.5" y2="14.5" strokeLinecap="round" />
-        <line x1="9.2" y1="18.5" x2="14.8" y2="18.5" strokeLinecap="round" />
-      </svg>
+      <Dna size={22} />
     ),
     iconBg: 'bg-[#f0ebff] text-[#7c5cbf]',
     content: (
@@ -418,16 +426,7 @@ const criteriaData = [
     id: 'sm',
     title: 'Systemic Mastocytosis (SM)',
     icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-        <circle cx="11" cy="13" r="6" />
-        <circle cx="11" cy="13" r="2.5" fill="currentColor" opacity="0.4" />
-        <circle cx="19" cy="5" r="1.2" fill="currentColor" />
-        <circle cx="21" cy="9" r="1" fill="currentColor" />
-        <circle cx="17" cy="3" r="0.9" fill="currentColor" />
-        <line x1="15.2" y1="8.2" x2="18" y2="5.5" />
-        <line x1="16.5" y1="9.5" x2="19.5" y2="8.5" />
-        <line x1="15" y1="7" x2="17.2" y2="4" />
-      </svg>
+      <MastCellIcon size={22} />
     ),
     iconBg: 'bg-[#e6f5f5] text-[#2a9d8f]',
     content: (
@@ -472,10 +471,7 @@ const criteriaData = [
     id: 'egpa',
     title: 'Eosinophilic Granulomatosis with Polyangiitis (EGPA)',
     icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-        <path d="M12 20 L12 13" /><path d="M12 13 L7 8" /><path d="M12 13 L17 8" />
-        <path d="M7 8 L4 4" /><path d="M7 8 L10 4" /><path d="M17 8 L14 4" /><path d="M17 8 L20 4" />
-      </svg>
+      <VesselsIcon size={22} />
     ),
     iconBg: 'bg-[#fff0ea] text-[#e07050]',
     content: (
@@ -515,13 +511,7 @@ const criteriaData = [
     id: 'ihes',
     title: 'Idiopathic Hypereosinophilic Syndrome (iHES)',
     icon: (
-      <svg width="22" height="22" viewBox="0 0 36 36" fill="none">
-        <circle cx="12" cy="12" r="4" fill="currentColor" opacity=".9" />
-        <circle cx="24" cy="12" r="3" fill="currentColor" opacity=".5" />
-        <circle cx="18" cy="22" r="5" fill="currentColor" opacity=".7" />
-        <circle cx="10" cy="22" r="2.5" fill="currentColor" opacity=".4" />
-        <circle cx="26" cy="22" r="2.5" fill="currentColor" opacity=".4" />
-      </svg>
+      <EosinophilIcon size={22} />
     ),
     iconBg: 'bg-[#fff8e6] text-[#c9943a]',
     content: (
