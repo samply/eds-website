@@ -27,7 +27,7 @@ export default function Gauge({ percentage }: GaugeProps) {
   const dot = polarToXY(cx, cy, r, fillDeg);
 
   return (
-    <svg className="w-[220px] h-[200px]" viewBox="0 0 220 200">
+    <svg className="w-[220px] max-w-full h-auto" viewBox="0 0 220 200">
       {/* Track */}
       <path d={trackD} fill="none" stroke="#e8eef9" strokeWidth="17" strokeLinecap="round" />
       {/* Fill */}

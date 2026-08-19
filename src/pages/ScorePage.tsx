@@ -228,12 +228,12 @@ export default function ScorePage({ values, onValuesChange: setValues }: ScorePa
           /* Result content */
           <div>
             {/* Top: Gauge + interpretation */}
-            <div className="flex items-start gap-8 mb-7">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 sm:gap-8 mb-7">
               <div className="shrink-0">
                 <Gauge percentage={Math.round(result.probability * 100)} />
               </div>
 
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 <div className="font-heading text-xl font-bold text-navy mb-3">Eosinophilia Differentiation Score</div>
                 <p className="text-sm text-text-secondary mb-[18px] leading-relaxed">
                   The Eosinophilia Differentiation Score (EDS) displays the probability of clonal vs. non-clonal eosinophilia derived from the published training cohort.

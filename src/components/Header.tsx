@@ -20,18 +20,18 @@ export default function Header({ onAbout }: HeaderProps) {
     <header className="bg-white border-b border-border sticky top-0 z-100 shadow-sm">
       <div className="px-3 sm:px-6 lg:px-8 flex flex-col lg:flex-row lg:items-center lg:justify-between lg:h-[60px]">
         {/* Top row: Logo + Title + About */}
-        <div className="flex items-center justify-between py-2 lg:py-0 gap-2 sm:gap-4 lg:gap-6">
-          <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center justify-between py-2 lg:py-0 gap-2 sm:gap-4 lg:gap-6 min-w-0">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <EosinophilIcon
               size={28}
               className="w-7 h-7 sm:w-9 sm:h-9 shrink-0"
               style={{ color: '#728edc' }}
             />
-            <span className="font-heading font-semibold text-[14px] sm:text-[17px] text-navy tracking-tight whitespace-nowrap">
+            <span className="font-heading font-semibold text-[14px] sm:text-[17px] text-navy tracking-tight lg:whitespace-nowrap">
               Eosinophilia Differentiation Score
             </span>
           </div>
-          <div className="lg:hidden">
+          <div className="lg:hidden shrink-0">
             <button
               onClick={onAbout}
               className="flex items-center gap-1 px-2 py-1.5 border-none bg-transparent text-text-secondary text-[13px] font-medium cursor-pointer rounded-lg hover:bg-blue-pale hover:text-blue transition-[background,color] duration-150"
@@ -43,7 +43,7 @@ export default function Header({ onAbout }: HeaderProps) {
         </div>
 
         {/* Nav links */}
-        <nav className="flex items-center gap-0.5 sm:gap-1 pb-2 lg:pb-0">
+        <nav className="flex flex-wrap items-center gap-0.5 sm:gap-1 pb-2 lg:pb-0">
           {navItems.map(({ path, label }) => {
             const isActive = location === path || (path === '/score' && location === '/');
             return (

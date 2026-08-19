@@ -312,7 +312,8 @@ function CollapsibleRefs({ refs }: { refs: string[] }) {
 /* ── Diagnostic Table ── */
 function DiagnosticTable({ rows }: { rows: TabRow[] }) {
   return (
-    <table className="w-full border-collapse text-xs mb-6">
+    <div className="overflow-x-auto mb-6">
+    <table className="w-full border-collapse text-xs">
       <thead>
         <tr>
           <th className="text-[11px] font-bold text-text-muted uppercase tracking-wider px-2 py-1.5 border-b border-border bg-bg text-left w-[35%]">Modality</th>
@@ -328,6 +329,7 @@ function DiagnosticTable({ rows }: { rows: TabRow[] }) {
         ))}
       </tbody>
     </table>
+    </div>
   );
 }
 
@@ -421,6 +423,7 @@ const criteriaData = [
     iconBg: 'bg-[#f0ebff] text-[#7c5cbf]',
     content: (
       <div>
+        <div className="overflow-x-auto">
         <table className="w-full border-collapse text-xs">
           <thead>
             <tr>
@@ -433,6 +436,7 @@ const criteriaData = [
             <tr><td className="px-2 py-1.5 text-text-secondary border-b border-border align-top">Other defined tyrosine kinase fusions</td><td className="px-2 py-1.5 text-text-secondary border-b border-border align-top"><em>ETV6::FGFR2</em>; <em>ETV6::LYN</em>; <em>ETV6::NTRK3</em>; <em>RANBP2::ALK</em>; <em>BCR::RET</em>; <em>FGFR1OP::RET</em></td></tr>
           </tbody>
         </table>
+        </div>
         <div className="mt-5">
           <div className="text-[13px] font-bold text-navy mb-1.5">Genetic abnormalities, clinical presentations, and targeted therapy of myeloid/lymphoid neoplasms with eosinophilia and tyrosine kinase gene fusions</div>
             <div className="overflow-x-auto">
@@ -516,6 +520,7 @@ const criteriaData = [
     iconBg: 'bg-[#e6f5f5] text-[#2a9d8f]',
     content: (
       <div>
+        <div className="overflow-x-auto">
         <table className="w-full border-collapse text-xs">
           <thead>
             <tr>
@@ -548,6 +553,7 @@ const criteriaData = [
             </td></tr>
           </tbody>
         </table>
+        </div>
         <p className="text-[11px] text-text-muted italic mt-2.5">ICC Classification (Arber DA et al. <em>Blood</em>. 2022)</p>
       </div>
     ),
@@ -561,6 +567,7 @@ const criteriaData = [
     iconBg: 'bg-[#fff0ea] text-[#e07050]',
     content: (
       <div>
+        <div className="overflow-x-auto">
         <table className="w-full border-collapse text-[11px]">
           <thead>
             <tr>
@@ -585,6 +592,7 @@ const criteriaData = [
             ))}
           </tbody>
         </table>
+        </div>
         <div className="mt-3 bg-[#fffbec] text-navy text-xs font-medium p-2.5 rounded-lg border-l-3 border-accent-orange">
           ⚡ These classification criteria should be applied to classify a patient as having eosinophilic granulomatosis with polyangiitis when a diagnosis of small- or medium-vessel vasculitis has been made. Alternate diagnoses mimicking vasculitis should be excluded prior to applying the criteria. A score of ≥ 6 is needed for classification of EGPA.
         </div>
@@ -601,6 +609,7 @@ const criteriaData = [
     iconBg: 'bg-[#fff8e6] text-[#c9943a]',
     content: (
       <div>
+        <div className="overflow-x-auto">
         <table className="w-full border-collapse text-xs">
           <thead>
             <tr>
@@ -627,6 +636,7 @@ const criteriaData = [
             </td></tr>
           </tbody>
         </table>
+        </div>
         <p className="text-[11px] text-text-muted italic mt-2.5">ICC Classification (Arber DA et al. <em>Blood</em>. 2022)</p>
       </div>
     ),
@@ -731,7 +741,7 @@ function GeneticWorkup() {
         title="Initial genetic diagnostics"
         subtitle="Conventional cytogenetics, FISH, PCR, and NGS"
       >
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-3 my-3.5">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(220px,100%),1fr))] gap-3 my-3.5">
           <MethodCard title="Conventional cytogenetics (karyotype)">
             <ul className="list-disc pl-4 text-xs text-text-secondary space-y-0.5">
               <li>Detectable chromosomal rearrangements involving tyrosine kinase-encoding genes</li>
@@ -765,7 +775,7 @@ function GeneticWorkup() {
         title="Advanced sequencing"
         subtitle="Whole transcriptome and genome sequencing"
       >
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-3 my-3.5">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(220px,100%),1fr))] gap-3 my-3.5">
           <MethodCard title="Whole transcriptome sequencing (WTS) / Whole genome sequencing (WGS)">
             <ul className="list-disc pl-4 text-xs text-text-secondary space-y-0.5">
               <li>Identifying gene expression profiles and fusion transcripts</li>
