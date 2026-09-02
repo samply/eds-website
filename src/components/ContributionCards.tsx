@@ -14,7 +14,7 @@ const iconMap: Record<string, React.ReactNode> = {
   'Immunoglobulin E': <AntibodyIcon size={20} />,
   'Lactate dehydrogenase': <LdhIcon size={20} />,
   'Vitamin B12': <MoleculeIcon size={20} />,
-  'Involved organs': <OrgansIcon size={20} />,
+  'N° of involved organs': <OrgansIcon size={20} />,
   'Splenomegaly': <SpleenIcon size={20} />,
   'ENT / Asthma': <EntIcon size={20} />,
 };

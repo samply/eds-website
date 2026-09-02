@@ -87,7 +87,7 @@ export function computeContributions(values: FormValues): Contribution[] {
     { name: 'Immunoglobulin E',   val: -0.002612035 * ige },
     { name: 'Lactate dehydrogenase',                val: -0.002178421 * ldh },
     { name: 'Vitamin B12',        val:  0.003489235 * b12 },
-    { name: 'Involved organs',    val: -0.860808755 * organs },
+    { name: 'N° of involved organs', val: -0.860808755 * organs },
     { name: 'Splenomegaly',       val:  splen === 'yes' ? 2.855350231 : 0 },
     { name: 'ENT / Asthma',       val:  ent === 'yes' ? -1.388400077 : 0 },
   ];

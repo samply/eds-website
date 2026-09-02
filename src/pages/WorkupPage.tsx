@@ -162,7 +162,7 @@ const tabData: Record<TabId, TabData> = {
       { modality: 'Biopsy/Bronchoalveolar lavage (BAL)', findings: 'e.g., eosinophilic infiltration, eosinophilic inflammation, high number of eosinophils in BAL' },
       { modality: 'Computed tomography (CT)', findings: 'e.g., parenchymal opacities, airway abnormalities, pleural effusion, nodules, emphysema' },
       { modality: 'X-ray', findings: 'e.g., parenchymal opacities, airway abnormalities, pleural effusion, nodules, emphysema' },
-      { modality: 'Pulmonary function test (PFT)', findings: 'e.g., reduced forced expiratory volume in 1 second (FEV1), increased fractional exhaled nitric oxide (FeNO), reduced Tiffeneau-index, increased airway resistance (Rtot)' },
+      { modality: 'Pulmonary function test (PFT)', findings: 'e.g., reduced forced expiratory volume in 1 second (FEV1), increased fractional exhaled nitric oxide (FeNO), reduced tiffeneau-index, increased airway resistance (Rtot)' },
     ],
     references: [
       'Cottin, V., Bel, E., Bottero, P., et al. (2016). Respiratory manifestations of eosinophilic granulomatosis with polyangiitis (Churg-Strauss). Eur Respir J, 48(5), 1429-1441.',
@@ -438,7 +438,7 @@ const criteriaData = [
         </table>
         </div>
         <div className="mt-5">
-          <div className="text-[13px] font-bold text-navy mb-1.5">Genetic abnormalities, clinical presentations, and targeted therapy of myeloid/lymphoid neoplasms with eosinophilia and tyrosine kinase gene fusions</div>
+          <div className="text-[13px] font-bold text-navy mb-1.5">Genetic abnormalities, clinical presentations, and targeted therapy of M/LN-TK</div>
             <div className="overflow-x-auto">
             <table className="w-full border-collapse text-[11px]">
               <thead>
@@ -755,7 +755,7 @@ function GeneticWorkup() {
               <li>Further assessment for rearrangements and aberrations involving <em>PDGFRA</em>, <em>PDGFRB</em>, <em>FGFR1</em>, and <em>JAK2</em></li>
             </ul>
           </MethodCard>
-          <MethodCard title="Polymerase Chain Reaction (PCR)">
+          <MethodCard title="Polymerase chain reaction (PCR)">
             <ul className="list-disc pl-4 text-xs text-text-secondary space-y-0.5">
               <li>Assessment of established rearrangements including <em>FIP1L1::PDGFRA</em>, <em>ETV6::PDGFRB</em>, <em>ZMYM2::FGFR1</em>, <em>PCM1::JAK2</em>, and <em>ETV6::ABL1</em></li>
             </ul>

@@ -110,7 +110,12 @@ export default function ScorePage({ values, onValuesChange: setValues }: ScorePa
         {/* Organs */}
         <div className="mb-[18px]">
           <label className="flex items-center gap-1.5 text-[13px] font-semibold text-text-primary mb-1.5">
-            Number of involved organs
+            <span className="relative inline-block underline decoration-dotted underline-offset-3 cursor-help group">
+              Number of involved organs
+              <span className="invisible opacity-0 group-hover:visible group-hover:opacity-100 absolute bottom-[calc(100%+6px)] left-0 w-[260px] bg-navy text-white text-[11px] font-medium leading-snug px-2 py-1.5 rounded transition-opacity duration-150 pointer-events-none z-100 after:content-[''] after:absolute after:top-full after:left-8 after:border-5 after:border-transparent after:border-t-navy">
+                Organ systems assessed for EDS: heart, lungs (including asthma), gastrointestinal system (including liver), skin, kidneys, central nervous system, peripheral nervous system, lymph nodes, spleen
+              </span>
+            </span>
           </label>
           <div className="relative">
             <select
