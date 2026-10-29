@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { Router, Switch, Route } from 'wouter';
-import { useHashLocation } from 'wouter/use-hash-location';
+import { Router, Switch, Route, Redirect } from 'wouter';
 import { DEFAULT_FORM_VALUES } from './types';
 import type { FormValues } from './types';
 import Header from './components/Header';
@@ -16,7 +15,7 @@ export default function App() {
   const [scoreValues, setScoreValues] = useState<FormValues>(DEFAULT_FORM_VALUES);
 
   return (
-    <Router hook={useHashLocation}>
+    <Router>
       <div className="min-h-screen flex flex-col">
         <Header onAbout={() => setAboutOpen(true)} />
 
@@ -36,6 +35,10 @@ export default function App() {
               </Route>
               <Route path="/">
                 <ScorePage values={scoreValues} onValuesChange={setScoreValues} />
+              </Route>
+              {/* The server answers every path with index.html, so send unknown ones home. */}
+              <Route>
+                <Redirect to="/" replace />
               </Route>
             </Switch>
           </main>
