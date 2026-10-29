@@ -137,6 +137,7 @@ interface TabData { rows: TabRow[]; references: string[] }
 const tabData: Record<TabId, TabData> = {
   cardiac: {
     rows: [
+      { modality: 'Clinical symptoms', findings: 'e.g., progressive exertional dyspnea, peripheral edema, pleural effusion, or other signs of heart failure' },
       { modality: 'Biopsy', findings: 'e.g., eosinophilic infiltration, eosinophilic inflammation, fibrotic changes, necrosis' },
       { modality: 'Magnetic resonance imaging (MRI)', findings: 'e.g., late gadolinium enhancement, thrombus, pericardial effusion, reduced ejection fraction, signs of myocardial edema' },
       { modality: 'Echocardiography', findings: 'e.g., valvular heart disease, reduced ejection fraction, pericardial effusion' },
@@ -738,8 +739,7 @@ function GeneticWorkup() {
         isOpen={openStep === 1}
         onToggle={() => toggleStep(1)}
         icon={<Dna size={18} />}
-        title="Initial genetic diagnostics"
-        subtitle="Conventional cytogenetics, FISH, PCR, and NGS"
+        title="Initial workup"
       >
         <div className="grid grid-cols-[repeat(auto-fit,minmax(min(220px,100%),1fr))] gap-3 my-3.5">
           <MethodCard title="Conventional cytogenetics (karyotype)">
@@ -772,11 +772,10 @@ function GeneticWorkup() {
         isOpen={openStep === 2}
         onToggle={() => toggleStep(2)}
         icon={<Database size={18} />}
-        title="Advanced sequencing"
-        subtitle="Whole transcriptome and genome sequencing"
+        title="Advanced workup"
       >
         <div className="grid grid-cols-[repeat(auto-fit,minmax(min(220px,100%),1fr))] gap-3 my-3.5">
-          <MethodCard title="Whole transcriptome sequencing (WTS) / Whole genome sequencing (WGS)">
+          <MethodCard title="Nanopore sequencing, whole transcriptome sequencing (WTS), whole genome sequencing (WGS)">
             <ul className="list-disc pl-4 text-xs text-text-secondary space-y-0.5">
               <li>Identifying gene expression profiles and fusion transcripts</li>
               <li>Detection of single nucleotide variants (SNV), small deletions/insertions (Indels), structural variants (SV) and copy number variants (CNV)</li>
@@ -793,14 +792,12 @@ function GeneticAccordion({
   onToggle,
   icon,
   title,
-  subtitle,
   children,
 }: {
   isOpen: boolean;
   onToggle: () => void;
   icon: React.ReactNode;
   title: string;
-  subtitle: string;
   children: React.ReactNode;
 }) {
   return (
@@ -814,7 +811,6 @@ function GeneticAccordion({
         </div>
         <div className="flex-1 min-w-0">
           <h3 className={`font-heading font-semibold text-navy ${isOpen ? 'text-[15px]' : 'text-sm'}`}>{title}</h3>
-          {isOpen && <p className="text-[13px] text-text-muted mt-0.5">{subtitle}</p>}
         </div>
         <ChevronDown
           size={16}

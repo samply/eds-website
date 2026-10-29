@@ -8,7 +8,6 @@ import type { FormValues, Contribution, ResultData, CardiacResult, CardiacScore,
 export const INPUT_LIMITS = {
   tryptase: { min: 1.9, max: 793.8 },
   ige: { min: 1.5, max: 7626 },
-  ldh: { min: 91.6, max: 1199 },
   b12: { min: 190, max: 6000 },
   organs: { min: 0, max: 8 },
 } as const;
@@ -33,37 +32,34 @@ export function isOutOfRange(raw: string, field: LimitedField): boolean {
 }
 
 /**
- * Real EDS coefficients from the published logistic regression model (Table 1).
- * Linear predictor: η = (Σ wⱼ × xⱼ) − w₀
+ * Real EDS coefficients from the published logistic regression model (Table 2).
+ * Linear predictor: η = w₀ + Σ wⱼ × xⱼ
  * Probability: P(EDS) = 1 / (1 + e^(−η))
  */
 export function computeScore(values: FormValues): number {
   const tryptase = clampValue(values.tryptase, 'tryptase');
   const ige = clampValue(values.ige, 'ige');
-  const ldh = clampValue(values.ldh, 'ldh');
   const b12 = clampValue(values.b12, 'b12');
   const organs = clampValue(values.organs, 'organs');
   const splen = values.splen === 'yes' ? 1 : 0;
   const ent = values.ent === 'yes' ? 1 : 0;
 
-  // Coefficients from Table 1
-  const w_tryptase = 0.125516906;
-  const w_b12      = 0.003489235;
-  const w_ldh      = -0.002178421;
-  const w_ige      = -0.002612035;
-  const w_organs   = -0.860808755;
-  const w_splen    = 2.855350231;
-  const w_ent      = -1.388400077;
-  const w0         = -1.34034;
+  // Coefficients from Table 2
+  const w_tryptase = 0.1256006;
+  const w_b12      = 0.0031325;
+  const w_ige      = -0.0030064;
+  const w_organs   = -0.7769450;
+  const w_splen    = 2.2903299;
+  const w_ent      = -1.3023130;
+  const w0         = -1.658558386;
 
   const eta = w_tryptase * tryptase
           + w_b12      * b12
-          + w_ldh      * ldh
           + w_ige      * ige
           + w_organs   * organs
           + w_splen    * splen
           + w_ent      * ent
-          - w0;
+          + w0;
 
   return 1 / (1 + Math.exp(-eta));
 }
@@ -76,20 +72,18 @@ export function computeScore(values: FormValues): number {
 export function computeContributions(values: FormValues): Contribution[] {
   const tryptase = clampValue(values.tryptase, 'tryptase');
   const ige = clampValue(values.ige, 'ige');
-  const ldh = clampValue(values.ldh, 'ldh');
   const b12 = clampValue(values.b12, 'b12');
   const organs = clampValue(values.organs, 'organs');
   const splen = values.splen;
   const ent = values.ent;
 
   const raw = [
-    { name: 'Serum tryptase',           val:  0.125516906 * tryptase },
-    { name: 'Immunoglobulin E',   val: -0.002612035 * ige },
-    { name: 'Lactate dehydrogenase',                val: -0.002178421 * ldh },
-    { name: 'Vitamin B12',        val:  0.003489235 * b12 },
-    { name: 'N° of involved organs', val: -0.860808755 * organs },
-    { name: 'Splenomegaly',       val:  splen === 'yes' ? 2.855350231 : 0 },
-    { name: 'ENT / Asthma',       val:  ent === 'yes' ? -1.388400077 : 0 },
+    { name: 'Serum tryptase',           val:  0.1256006 * tryptase },
+    { name: 'Immunoglobulin E',   val: -0.0030064 * ige },
+    { name: 'Vitamin B12',        val:  0.0031325 * b12 },
+    { name: 'N° of involved organs', val: -0.7769450 * organs },
+    { name: 'Splenomegaly',       val:  splen === 'yes' ? 2.2903299 : 0 },
+    { name: 'ENT / Asthma',       val:  ent === 'yes' ? -1.3023130 : 0 },
   ];
 
   const total = raw.reduce((sum, r) => sum + Math.abs(r.val), 0);
@@ -108,7 +102,6 @@ export function calculateResult(values: FormValues): ResultData | null {
   // Validate all fields are filled
   if (isNaN(parseFloat(values.tryptase)) || values.tryptase === '') return null;
   if (isNaN(parseFloat(values.ige)) || values.ige === '') return null;
-  if (isNaN(parseFloat(values.ldh)) || values.ldh === '') return null;
   if (isNaN(parseFloat(values.b12)) || values.b12 === '') return null;
   if (isNaN(parseInt(values.organs)) || values.organs === '') return null;
   if (!values.splen) return null;
@@ -118,13 +111,13 @@ export function calculateResult(values: FormValues): ResultData | null {
   const pct = Math.round(probability * 100);
   const contributions = computeContributions(values);
 
-  if (pct >= 73) {
+  if (pct >= 84) {
     return {
       probability,
       level: 'Likely clonal',
       levelClass: 'high',
       description:
-        'Based on the Eosinophilia Differentiation Score (EDS), a <strong>clonal cause</strong> of eosinophilia is likely (probability ≥ 73%).',
+        'Based on the Eosinophilia Differentiation Score (EDS), a <strong>clonal cause</strong> of eosinophilia is likely (probability ≥ 84%).',
       recommendation: 'Genetic testing is recommended.',
       contributions,
     };

@@ -11,7 +11,7 @@ export default function MethodsPage() {
       {/* About section */}
       <Section icon={Info} title="About the Eosinophilia Differentiation Score (EDS)">
         <p className="text-sm text-text-secondary leading-relaxed mb-3.5">
-          The Eosinophilia Differentiation Score (EDS) displays the probability of clonal vs. non-clonal eosinophilia derived from the published training cohort.
+          The Eosinophilia Differentiation Score (EDS) displays the probability of clonal vs. non-clonal eosinophilia derived from the published discovery cohort.
         </p>
         <InfoBox>
           For a full description of the cohorts and statistical approach, please refer to the original publication:{' '}
@@ -25,10 +25,10 @@ export default function MethodsPage() {
       <Section icon={Activity} title="Statistical Background and Validation">
         <p className="text-sm text-text-secondary leading-relaxed mb-3.5">
           To develop the EDS, a random forest machine-learning algorithm was used to identify the most relevant
-          predictors, which were subsequently incorporated into a two-step logistic regression model. Seven variables
+          predictors, which were subsequently incorporated into a two-step logistic regression model. Six variables
           emerged as the strongest discriminators between clonal and non-clonal eosinophilic disorders among patients
           with eosinophils ≥ 0.5 × 10⁹/L. A clonal phenotype was indicated by the continuous predictors elevated
-          serum tryptase, elevated vitamin B12, lower immunoglobulin E, lower lactate dehydrogenase, lower number
+          serum tryptase, elevated vitamin B12, lower immunoglobulin E, lower number
           of involved organ sites, as well as the categorical predictors presence of splenomegaly and absence of
           asthma and/or ear-nose-throat (ENT) involvement.
         </p>
@@ -42,14 +42,14 @@ export default function MethodsPage() {
         {/* Cutoff box */}
         <div className="bg-blue-pale border-2 border-blue rounded-xl p-6 my-5 text-center">
           <div className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-2">Cutoff</div>
-          <div className="font-heading text-[42px] font-bold text-navy leading-none">73%</div>
+          <div className="font-heading text-[42px] font-bold text-navy leading-none">84%</div>
           <div className="text-sm text-text-secondary mt-3 space-y-2">
             <div>
-              <span className="font-semibold text-navy">Score ≥ 73%</span>
+              <span className="font-semibold text-navy">Score ≥ 84%</span>
               {' — '}clonal disorders
             </div>
             <div>
-              <span className="font-semibold text-navy">Score &lt; 73%</span>
+              <span className="font-semibold text-navy">Score &lt; 84%</span>
               {' — '}non-clonal disorders
             </div>
           </div>
@@ -60,19 +60,19 @@ export default function MethodsPage() {
           <div className="bg-bg border border-border rounded-lg p-3.5">
             <div className="flex items-center gap-1.5 text-[11px] font-bold text-navy uppercase tracking-wider mb-2.5">
               <BarChart3 size={13} strokeWidth={2} />
-              Training metrics
+              Discovery metrics
             </div>
             <div className="flex justify-between items-center mb-1.5">
               <span className="text-[13px] text-text-secondary">Sensitivity</span>
-              <span className="font-heading text-base font-bold text-navy">96.7%</span>
+              <span className="font-heading text-base font-bold text-navy">93%</span>
             </div>
             <div className="flex justify-between items-center mb-1.5">
               <span className="text-[13px] text-text-secondary">Specificity</span>
-              <span className="font-heading text-base font-bold text-navy">96.5%</span>
+              <span className="font-heading text-base font-bold text-navy">96%</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-[13px] text-text-secondary">Area under the curve</span>
-              <span className="font-heading text-base font-bold text-navy">0.993</span>
+              <span className="font-heading text-base font-bold text-navy">0.992</span>
             </div>
           </div>
           <div className="bg-bg border border-border rounded-lg p-3.5">
@@ -82,15 +82,15 @@ export default function MethodsPage() {
             </div>
             <div className="flex justify-between items-center mb-1.5">
               <span className="text-[13px] text-text-secondary">Sensitivity</span>
-              <span className="font-heading text-base font-bold text-navy">### %</span>
+              <span className="font-heading text-base font-bold text-navy">87%</span>
             </div>
             <div className="flex justify-between items-center mb-1.5">
               <span className="text-[13px] text-text-secondary">Specificity</span>
-              <span className="font-heading text-base font-bold text-navy">### %</span>
+              <span className="font-heading text-base font-bold text-navy">97%</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-[13px] text-text-secondary">Area under the curve</span>
-              <span className="font-heading text-base font-bold text-navy">###</span>
+              <span className="font-heading text-base font-bold text-navy">0.959</span>
             </div>
           </div>
         </div>
@@ -102,10 +102,10 @@ export default function MethodsPage() {
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
               </svg>
-              Training cohort
+              Discovery cohort
             </div>
             <p className="text-xs text-text-muted italic leading-relaxed m-0">
-              [ Placeholder – training cohort details to be added: n, institutions, time period, clonal vs. non-clonal distribution ]
+              [ Placeholder – discovery cohort details to be added: n, institutions, time period, clonal vs. non-clonal distribution ]
             </p>
           </div>
           <div className="bg-bg border-2 border-dashed border-border rounded-lg p-3.5">

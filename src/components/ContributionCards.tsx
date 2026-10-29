@@ -2,7 +2,6 @@ import type { Contribution } from '../types';
 import {
   MastCellIcon,
   AntibodyIcon,
-  LdhIcon,
   MoleculeIcon,
   OrgansIcon,
   SpleenIcon,
@@ -12,7 +11,6 @@ import {
 const iconMap: Record<string, React.ReactNode> = {
   'Serum tryptase': <MastCellIcon size={20} />,
   'Immunoglobulin E': <AntibodyIcon size={20} />,
-  'Lactate dehydrogenase': <LdhIcon size={20} />,
   'Vitamin B12': <MoleculeIcon size={20} />,
   'N° of involved organs': <OrgansIcon size={20} />,
   'Splenomegaly': <SpleenIcon size={20} />,

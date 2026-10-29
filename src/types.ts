@@ -3,7 +3,6 @@ export type ToggleValue = 'yes' | 'no' | null;
 export interface FormValues {
   tryptase: string;
   ige: string;
-  ldh: string;
   b12: string;
   organs: string;
   splen: ToggleValue;
@@ -36,7 +35,6 @@ export interface CardiacResult {
 export const DEFAULT_FORM_VALUES: FormValues = {
   tryptase: '',
   ige: '',
-  ldh: '',
   b12: '',
   organs: '',
   splen: null,

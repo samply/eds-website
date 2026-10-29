@@ -12,11 +12,11 @@ import ContributionCards from '../components/ContributionCards';
 const EXAMPLE_PATIENTS: { label: string; values: FormValues }[] = [
   {
     label: 'Example 1',
-    values: { tryptase: '40', ige: '170', ldh: '160', b12: '1400', organs: '1', splen: 'yes', ent: 'no' },
+    values: { tryptase: '40', ige: '170', b12: '1400', organs: '1', splen: 'yes', ent: 'no' },
   },
   {
     label: 'Example 2',
-    values: { tryptase: '6', ige: '1800', ldh: '120', b12: '280', organs: '3', splen: 'no', ent: 'yes' },
+    values: { tryptase: '6', ige: '1800', b12: '280', organs: '3', splen: 'no', ent: 'yes' },
   },
 ];
 
@@ -43,7 +43,6 @@ export default function ScorePage({ values, onValuesChange: setValues }: ScorePa
     const canCompute =
       values.tryptase !== '' &&
       values.ige !== '' &&
-      values.ldh !== '' &&
       values.b12 !== '' &&
       values.organs !== '' &&
       values.splen !== null &&
@@ -84,16 +83,6 @@ export default function ScorePage({ values, onValuesChange: setValues }: ScorePa
           placeholder="e.g. 450"
           step="1"
           value={values.ige}
-          onChange={handleTextChange}
-        />
-
-        <NumberField
-          label="Lactate dehydrogenase"
-          field="ldh"
-          unit="U/L"
-          placeholder="e.g. 380"
-          step="1"
-          value={values.ldh}
           onChange={handleTextChange}
         />
 
@@ -241,7 +230,7 @@ export default function ScorePage({ values, onValuesChange: setValues }: ScorePa
               <div className="flex-1 min-w-0">
                 <div className="font-heading text-xl font-bold text-navy mb-3">Eosinophilia Differentiation Score</div>
                 <p className="text-sm text-text-secondary mb-[18px] leading-relaxed">
-                  The Eosinophilia Differentiation Score (EDS) displays the probability of clonal vs. non-clonal eosinophilia derived from the published training cohort.
+                  The Eosinophilia Differentiation Score (EDS) displays the probability of clonal vs. non-clonal eosinophilia derived from the published discovery cohort.
                 </p>
                 <Link
                   to="/methods"

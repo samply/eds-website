@@ -26,12 +26,12 @@ export default function ProbabilityScale({ percentage }: ProbabilityScaleProps) 
 
         {/* Scale bar */}
         <div className="h-3 rounded-full relative flex overflow-visible mb-2">
-          <div className="w-[73%] h-full bg-accent-green rounded-l-full" />
-          <div className="w-[27%] h-full bg-accent-red rounded-r-full" />
-          {/* Cutoff line at 73% */}
+          <div className="w-[84%] h-full bg-accent-green rounded-l-full" />
+          <div className="w-[16%] h-full bg-accent-red rounded-r-full" />
+          {/* Cutoff line at 84% */}
           <div
             className="absolute top-[-4px] w-[2px] h-5 bg-navy rounded-sm"
-            style={{ left: '73%', transform: 'translateX(-50%)' }}
+            style={{ left: '84%', transform: 'translateX(-50%)' }}
           />
           {/* Marker */}
           <div
@@ -44,16 +44,16 @@ export default function ProbabilityScale({ percentage }: ProbabilityScaleProps) 
       {/* Labels */}
       <div className="flex justify-between text-[11px] text-text-muted relative mb-2.5">
         <span>0%</span>
-        <span className="absolute left-[73%] -translate-x-1/2">73%</span>
+        <span className="absolute left-[84%] -translate-x-1/2">84%</span>
         <span>100%</span>
       </div>
 
       {/* Regions */}
       <div className="flex">
-        <div className="flex flex-col text-xs font-semibold text-accent-green gap-0.5" style={{ width: '73%' }}>
+        <div className="flex flex-col text-xs font-semibold text-accent-green gap-0.5" style={{ width: '84%' }}>
           Clonal eosinophilia unlikely
         </div>
-        <div className="flex flex-col text-xs font-semibold text-accent-red gap-0.5 text-right" style={{ width: '27%' }}>
+        <div className="flex flex-col text-xs font-semibold text-accent-red gap-0.5 text-right" style={{ width: '16%' }}>
           Clonal eosinophilia likely
         </div>
       </div>
