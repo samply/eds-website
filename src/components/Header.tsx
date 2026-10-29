@@ -1,9 +1,9 @@
-import { Link, useLocation } from 'wouter';
+import { NavLink } from 'react-router';
 import { Info } from 'lucide-react';
 import { EosinophilIcon } from './icons';
 
 const navItems = [
-  { path: '/score', label: 'Score' },
+  { path: '/', label: 'Score' },
   { path: '/methods', label: 'Methods' },
   { path: '/workup', label: 'Diagnostic workup' },
   { path: '/contact', label: 'Contact' },
@@ -14,8 +14,6 @@ interface HeaderProps {
 }
 
 export default function Header({ onAbout }: HeaderProps) {
-  const [location] = useLocation();
-
   return (
     <header className="bg-white border-b border-border sticky top-0 z-100 shadow-sm">
       <div className="px-3 sm:px-6 lg:px-8 flex flex-col lg:flex-row lg:items-center lg:justify-between lg:h-[60px]">
@@ -44,25 +42,25 @@ export default function Header({ onAbout }: HeaderProps) {
 
         {/* Nav links */}
         <nav className="flex flex-wrap items-center gap-0.5 sm:gap-1 pb-2 lg:pb-0">
-          {navItems.map(({ path, label }) => {
-            const isActive = location === path || (path === '/score' && location === '/');
-            return (
-              <Link
-                key={path}
-                href={path}
-                className={`
-                  px-1.5 sm:px-2.5 lg:px-3 py-1.5 rounded-lg text-[13px] sm:text-sm font-medium cursor-pointer no-underline
-                  transition-[background,color] duration-150
-                  ${isActive
-                    ? 'bg-blue-pale text-blue font-semibold'
-                    : 'text-text-secondary hover:bg-blue-pale hover:text-blue'
-                  }
-                `}
-              >
-                {label}
-              </Link>
-            );
-          })}
+          {/* NavLink matches with or without a trailing slash (static servers
+              and the prerender serve /methods/ as well as /methods). */}
+          {navItems.map(({ path, label }) => (
+            <NavLink
+              key={path}
+              to={path}
+              end={path === '/'}
+              className={({ isActive }) => `
+                px-1.5 sm:px-2.5 lg:px-3 py-1.5 rounded-lg text-[13px] sm:text-sm font-medium cursor-pointer no-underline
+                transition-[background,color] duration-150
+                ${isActive
+                  ? 'bg-blue-pale text-blue font-semibold'
+                  : 'text-text-secondary hover:bg-blue-pale hover:text-blue'
+                }
+              `}
+            >
+              {label}
+            </NavLink>
+          ))}
         </nav>
 
         {/* Desktop About button */}

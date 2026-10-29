@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
-import { Link } from 'wouter';
+import { Link, useOutletContext } from 'react-router';
+import type { MetaFunction } from 'react-router';
 import { ArrowRight, RotateCcw } from 'lucide-react';
 import { DEFAULT_FORM_VALUES } from '../types';
-import type { FormValues } from '../types';
+import type { FormValues, ScoreContext } from '../types';
 import { calculateResult, INPUT_LIMITS, isOutOfRange } from '../utils/scoring';
 import type { LimitedField } from '../utils/scoring';
 import Gauge from '../components/Gauge';
@@ -20,12 +21,14 @@ const EXAMPLE_PATIENTS: { label: string; values: FormValues }[] = [
   },
 ];
 
-interface ScorePageProps {
-  values: FormValues;
-  onValuesChange: React.Dispatch<React.SetStateAction<FormValues>>;
-}
+export const meta: MetaFunction = () => [
+  { title: 'Eosinophilia Differentiation Score (EDS)' },
+  // Same text as the About dialog; search engines usually show this as the snippet.
+  { name: 'description', content: 'The Eosinophilia Differentiation Score (EDS) is a tool for distinguishing clonal from non-clonal eosinophilia derived from factors associated with clonal versus non-clonal eosinophilia in the underlying study cohort.' },
+];
 
-export default function ScorePage({ values, onValuesChange: setValues }: ScorePageProps) {
+export default function ScorePage() {
+  const { values, setValues } = useOutletContext<ScoreContext>();
   const handleReset = () => setValues(DEFAULT_FORM_VALUES);
   const handleTextChange = (field: keyof FormValues, value: string) => {
     setValues((prev) => ({ ...prev, [field]: value }));

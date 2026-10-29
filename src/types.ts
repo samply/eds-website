@@ -1,3 +1,5 @@
+import type { Dispatch, SetStateAction } from 'react';
+
 export type ToggleValue = 'yes' | 'no' | null;
 
 export interface FormValues {
@@ -40,3 +42,9 @@ export const DEFAULT_FORM_VALUES: FormValues = {
   splen: null,
   ent: null,
 };
+
+/** Score form state, owned by the root layout and handed to the score page via the outlet. */
+export interface ScoreContext {
+  values: FormValues;
+  setValues: Dispatch<SetStateAction<FormValues>>;
+}

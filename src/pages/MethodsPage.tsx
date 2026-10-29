@@ -1,5 +1,11 @@
 import { Info, Activity, BookOpen, AlertTriangle, BarChart3, BadgeCheck } from 'lucide-react';
 import { cn } from '../utils/cn';
+import type { MetaFunction } from 'react-router';
+
+export const meta: MetaFunction = () => [
+  { title: 'Methods – Eosinophilia Differentiation Score' },
+  { name: 'description', content: 'How the Eosinophilia Differentiation Score (EDS) was developed and validated: variables, statistical model, cutoff and performance.' },
+];
 
 export default function MethodsPage() {
   return (

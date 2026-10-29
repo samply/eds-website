@@ -16,6 +16,7 @@ import {
   BrainIcon,
   LymphNodeIcon,
 } from '../components/icons';
+import type { MetaFunction } from 'react-router';
 
 /* ── Abbreviations of the M/LN-TK table, shown as hover tooltips ── */
 const ABBREVIATIONS: Record<string, string> = {
@@ -335,6 +336,11 @@ function DiagnosticTable({ rows }: { rows: TabRow[] }) {
 }
 
 /* ── Main WorkupPage ── */
+export const meta: MetaFunction = () => [
+  { title: 'Diagnostic workup – Eosinophilia Differentiation Score' },
+  { name: 'description', content: 'Diagnostic workup of eosinophilia: assessment of organ involvement, diagnostic criteria and genetic testing.' },
+];
+
 export default function WorkupPage() {
   const [activeTab, setActiveTab] = useState<TabId>('cardiac');
 

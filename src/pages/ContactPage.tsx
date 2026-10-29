@@ -1,4 +1,10 @@
 import { Mail } from 'lucide-react';
+import type { MetaFunction } from 'react-router';
+
+export const meta: MetaFunction = () => [
+  { title: 'Contact – Eosinophilia Differentiation Score' },
+  { name: 'description', content: 'Contact and enrolment in the German Registry on Disorders of Eosinophils and Mast Cells (GREM).' },
+];
 
 export default function ContactPage() {
   return (
