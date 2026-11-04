@@ -91,8 +91,7 @@ function Abbr({ term }: { term: string }) {
 function AbbrText({ children }: { children: string }) {
   const parts: React.ReactNode[] = [];
   let last = 0;
-  ABBR_RE.lastIndex = 0;
-  for (let m = ABBR_RE.exec(children); m !== null; m = ABBR_RE.exec(children)) {
+  for (const m of children.matchAll(ABBR_RE)) {
     if (m.index > last) parts.push(children.slice(last, m.index));
     parts.push(<Abbr key={m.index} term={m[0]} />);
     last = m.index + m[0].length;
