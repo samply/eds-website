@@ -27,7 +27,8 @@ export default function ContactPage() {
         </div>
       </div>
 
-      {/* Eosinophilia Registry */}
+      {/*
+      Eosinophilia Registry — hidden until coordinated with the other registries
       <div className="bg-white border border-border rounded-xl p-7 shadow-sm">
         <h2 className="font-heading text-lg font-semibold text-navy mb-[18px]">Participation in the German Registry on Disorders of Eosinophils and Mast Cells (GREM)</h2>
         <p className="text-sm text-text-secondary leading-relaxed mb-3.5">
@@ -53,6 +54,7 @@ export default function ContactPage() {
           </div>
         </div>
       </div>
+      */}
 
     </div>
   );

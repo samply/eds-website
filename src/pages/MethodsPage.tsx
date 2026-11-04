@@ -103,27 +103,23 @@ export default function MethodsPage() {
 
         {/* Cohort cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 my-[18px]">
-          <div className="bg-bg border-2 border-dashed border-border rounded-lg p-3.5">
+          <div className="bg-bg border border-border rounded-lg p-3.5">
             <div className="flex items-center gap-1.5 text-xs font-bold text-navy uppercase tracking-wider mb-2">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
               </svg>
               Discovery cohort
             </div>
-            <p className="text-xs text-text-muted italic leading-relaxed m-0">
-              [ Placeholder – discovery cohort details to be added: n, institutions, time period, clonal vs. non-clonal distribution ]
-            </p>
+            <CohortDonut total={461} clonalPct={56} />
           </div>
-          <div className="bg-bg border-2 border-dashed border-border rounded-lg p-3.5">
+          <div className="bg-bg border border-border rounded-lg p-3.5">
             <div className="flex items-center gap-1.5 text-xs font-bold text-navy uppercase tracking-wider mb-2">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M9 11l3 3L22 4" /><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
               </svg>
               Validation cohort
             </div>
-            <p className="text-xs text-text-muted italic leading-relaxed m-0">
-              [ Placeholder – validation cohort details to be added: n, institutions, time period, performance metrics ]
-            </p>
+            <CohortDonut total={671} clonalPct={26} />
           </div>
         </div>
 
@@ -183,6 +179,56 @@ function InfoBox({ children }: { children: React.ReactNode }) {
     <div className="flex items-start gap-3.5 bg-blue-pale border border-[#c5d4f0] rounded-lg p-4 mt-5">
       <BookOpen size={18} className="text-blue shrink-0 mt-0.5" />
       <p className="text-[13px] text-navy">{children}</p>
+    </div>
+  );
+}
+
+/* ── Donut chart: clonal vs. non-clonal share of a cohort ── */
+function CohortDonut({ total, clonalPct }: { total: number; clonalPct: number }) {
+  const r = 34;
+  const c = 2 * Math.PI * r;
+  const clonalLen = (clonalPct / 100) * c;
+  const segments = [
+    { label: 'Clonal', pct: clonalPct, color: 'var(--color-navy)' },
+    { label: 'Non-clonal', pct: 100 - clonalPct, color: 'var(--color-blue-light)' },
+  ];
+  return (
+    <div className="flex items-center gap-5 mt-3">
+      <svg
+        width="96"
+        height="96"
+        viewBox="0 0 96 96"
+        className="shrink-0"
+        role="img"
+        aria-label={`${total} patients: ${clonalPct}% clonal, ${100 - clonalPct}% non-clonal`}
+      >
+        <circle cx="48" cy="48" r={r} fill="none" stroke="var(--color-blue-light)" strokeWidth="14" />
+        <circle
+          cx="48"
+          cy="48"
+          r={r}
+          fill="none"
+          stroke="var(--color-navy)"
+          strokeWidth="14"
+          strokeDasharray={`${clonalLen} ${c - clonalLen}`}
+          transform="rotate(-90 48 48)"
+        />
+        <text x="48" y="50" textAnchor="middle" className="font-heading" fontSize="19" fontWeight="700" fill="var(--color-navy)">
+          {total}
+        </text>
+        <text x="48" y="63" textAnchor="middle" fontSize="9" fill="var(--color-text-muted)">
+          patients
+        </text>
+      </svg>
+      <div className="flex flex-col gap-2">
+        {segments.map((seg) => (
+          <div key={seg.label} className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ background: seg.color }} />
+            <span className="text-[13px] text-text-secondary">{seg.label}</span>
+            <span className="font-heading text-base font-bold text-navy ml-1">{seg.pct}%</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
