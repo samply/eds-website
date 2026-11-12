@@ -1,4 +1,4 @@
-import type { FormValues, Contribution, ResultData, CardiacResult, CardiacScore, CardiacRisk } from '../types';
+import type { FormValues, Contribution, ResultData } from '../types';
 
 /**
  * Plausible input ranges, derived from the 1st and 99th percentile of the raw
@@ -107,76 +107,8 @@ export function calculateResult(values: FormValues): ResultData | null {
   if (!values.splen) return null;
   if (!values.ent) return null;
 
-  const probability = computeScore(values);
-  const pct = Math.round(probability * 100);
-  const contributions = computeContributions(values);
-
-  if (pct >= 84) {
-    return {
-      probability,
-      level: 'Likely clonal',
-      levelClass: 'high',
-      description:
-        'Based on the Eosinophilia Differentiation Score (EDS), a <strong>clonal cause</strong> of eosinophilia is likely (probability ≥ 84%).',
-      recommendation: 'Genetic testing is recommended.',
-      contributions,
-    };
-  }
   return {
-    probability,
-    level: 'Unlikely clonal',
-    levelClass: 'low',
-    description:
-      'Based on the Eosinophilia Differentiation Score (EDS), a clonal cause of eosinophilia is <strong>unlikely</strong> — a non-clonal etiology is more probable.',
-    recommendation: 'Non-clonal causes should be considered and further investigated clinically.',
-    contributions,
+    probability: computeScore(values),
+    contributions: computeContributions(values),
   };
-}
-
-/**
- * Compute cardiac risk score.
- */
-export function computeCardiacRisk(
-  trop: number,
-  bnp: number,
-  lge: string
-): CardiacResult {
-  let score: CardiacScore = 0;
-  const details: string[] = [];
-
-  if (trop >= 0.045) {
-    score = ((score + 1) as CardiacScore);
-    details.push('hs-Troponin I ≥ 0.045 µg/L: +1');
-  }
-  if (bnp >= 125) {
-    score = ((score + 1) as CardiacScore);
-    details.push('NT-proBNP ≥ 125 ng/L: +1');
-  }
-  if (lge === 'yes') {
-    score = ((score + 3) as CardiacScore);
-    details.push('LGE positive: +3');
-  }
-
-  let risk: CardiacRisk;
-  if (score === 0) risk = 'low';
-  else if (score <= 3) risk = 'intermediate';
-  else risk = 'high';
-
-  return { score, risk, details };
-}
-
-/**
- * Get the recommendation text for a cardiac risk level.
- */
-export function getCardiacRecommendation(risk: CardiacRisk): string {
-  switch (risk) {
-    case 'low':
-      return 'Routine cardiac follow-up is recommended. No immediate intensification of therapy required based on cardiac risk score alone.';
-    case 'intermediate':
-      return 'Closer cardiological monitoring is recommended. Reassess need for therapy intensification based on full clinical picture.';
-    case 'high':
-      return 'Intensified cardiological monitoring is strongly recommended. Therapy escalation should be considered promptly to prevent further eosinophil-mediated cardiac damage.';
-    default:
-      return '';
-  }
 }

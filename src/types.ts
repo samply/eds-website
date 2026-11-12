@@ -18,20 +18,7 @@ export interface Contribution {
 
 export interface ResultData {
   probability: number;
-  level: string;
-  levelClass: 'high' | 'low';
-  description: string;
-  recommendation: string;
   contributions: Contribution[];
-}
-
-export type CardiacScore = 0 | 1 | 2 | 3 | 4 | 5;
-export type CardiacRisk = 'low' | 'intermediate' | 'high';
-
-export interface CardiacResult {
-  score: CardiacScore;
-  risk: CardiacRisk;
-  details: string[];
 }
 
 export const DEFAULT_FORM_VALUES: FormValues = {
