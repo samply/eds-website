@@ -1,11 +1,14 @@
 name: Release
 
 on:
-  push:
-    tags: ['v*']
+  release:
+    types: [published]
 
 permissions:
   contents: write
+
+env:
+  TAG: ${{ github.event.release.tag_name }}
 
 jobs:
   release:
@@ -29,13 +32,9 @@ jobs:
       - name: Zip static site
         run: |
           cd build/client
-          zip -r "$GITHUB_WORKSPACE/eds-website-${GITHUB_REF_NAME}.zip" .
+          zip -r "$GITHUB_WORKSPACE/eds-website-$TAG.zip" .
 
-      - name: Create GitHub release
+      - name: Attach zip to release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          gh release create "$GITHUB_REF_NAME" \
-            "eds-website-${GITHUB_REF_NAME}.zip" \
-            --title "$GITHUB_REF_NAME" \
-            --generate-notes
+        run: gh release upload "$TAG" "eds-website-$TAG.zip" --clobber
